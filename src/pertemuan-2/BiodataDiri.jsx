@@ -2,6 +2,7 @@
 import './custom.css';
 
 // Child Component 1: Header
+
 function Header({ name, nim }) {
   return (
     <div className="header">
