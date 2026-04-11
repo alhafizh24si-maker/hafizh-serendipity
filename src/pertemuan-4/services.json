@@ -1,0 +1,64 @@
+[
+  {
+    "id": 1,
+    "service_name": "Cloud Hosting Pro",
+    "category": "Infrastructure",
+    "status": "Available",
+    "image": "https://picsum.photos/seed/hosting/400/250",
+    "provider_info": {
+      "name": "SkyNet Systems",
+      "location": "Singapore",
+      "established": 2015
+    },
+    "pricing_plan": {
+      "monthly": 150000,
+      "yearly": 1500000,
+      "currency": "IDR"
+    },
+    "technical_specs": {
+      "storage": "50GB SSD",
+      "uptime": "99.9%",
+      "support": "24/7 Chat"
+    },
+    "features": ["Free SSL", "Auto Backup", "DDoS Protection"]
+  },
+  {
+    "id": 2,
+    "service_name": "AI Content Writer",
+    "category": "SaaS",
+    "status": "Beta",
+    "image": "https://picsum.photos/seed/ai/400/250",
+    "provider_info": { "name": "OpenMind AI", "location": "USA", "established": 2022 },
+    "pricing_plan": { "monthly": 200000, "yearly": 2000000, "currency": "IDR" },
+    "technical_specs": { "storage": "Cloud", "uptime": "98.0%", "support": "Email" },
+    "features": ["GPT-4", "Multi-language", "Plagiarism Check"]
+  },
+  {
+    "id": 3,
+    "service_name": "Cyber Security Audit",
+    "category": "Consulting",
+    "status": "Available",
+    "image": "https://picsum.photos/seed/security/400/250",
+    "provider_info": { "name": "Shield Corp", "location": "Germany", "established": 2010 },
+    "pricing_plan": { "monthly": 5000000, "yearly": 50000000, "currency": "IDR" },
+    "technical_specs": { "storage": "N/A", "uptime": "100%", "support": "Direct Call" },
+    "features": ["Pentest", "ISO 27001", "Threat Hunting"]
+  },
+  { "id": 4, "service_name": "E-Commerce Builder", "category": "SaaS", "status": "Available", "image": "https://picsum.photos/seed/shop/400/250", "provider_info": { "name": "StoreEase", "location": "Indonesia", "established": 2019 }, "pricing_plan": { "monthly": 300000, "yearly": 3200000, "currency": "IDR" }, "technical_specs": { "storage": "Unlimited", "uptime": "99.5%", "support": "WA Support" }, "features": ["Payment Gateway", "Inventory Sync", "SEO Tool"] },
+  { "id": 5, "service_name": "Email Marketing Automation", "category": "Marketing", "status": "Available", "image": "https://picsum.photos/seed/email/400/250", "provider_info": { "name": "MailFlow", "location": "UK", "established": 2017 }, "pricing_plan": { "monthly": 450000, "yearly": 4500000, "currency": "IDR" }, "technical_specs": { "storage": "10GB", "uptime": "99.9%", "support": "Ticket" }, "features": ["A/B Testing", "Autoresponder", "Analytics"] },
+  { "id": 6, "service_name": "Dedicated Server", "category": "Infrastructure", "status": "Limited", "image": "https://picsum.photos/seed/server/400/250", "provider_info": { "name": "DataVault", "location": "Japan", "established": 2012 }, "pricing_plan": { "monthly": 2500000, "yearly": 25000000, "currency": "IDR" }, "technical_specs": { "storage": "2TB NVMe", "uptime": "99.99%", "support": "Premium" }, "features": ["Root Access", "Dedicated IP", "Hardware Custom"] },
+  { "id": 7, "service_name": "API Gateway Pro", "category": "Development", "status": "Available", "image": "https://picsum.photos/seed/api/400/250", "provider_info": { "name": "DevConnect", "location": "India", "established": 2020 }, "pricing_plan": { "monthly": 800000, "yearly": 8000000, "currency": "IDR" }, "technical_specs": { "storage": "Logs Only", "uptime": "99.95%", "support": "Docs" }, "features": ["Rate Limiting", "Caching", "Auth Middleware"] },
+  { "id": 8, "service_name": "SEO Analyzer", "category": "Marketing", "status": "Available", "image": "https://picsum.photos/seed/seo/400/250", "provider_info": { "name": "RankUp", "location": "Canada", "established": 2018 }, "pricing_plan": { "monthly": 200000, "yearly": 1800000, "currency": "IDR" }, "technical_specs": { "storage": "Cloud", "uptime": "99.0%", "support": "Chat" }, "features": ["Keyword Research", "Backlink Audit", "Rank Tracker"] },
+  { "id": 9, "service_name": "Mobile App Dev Kit", "category": "Development", "status": "New", "image": "https://picsum.photos/seed/mobile/400/250", "provider_info": { "name": "AppForge", "location": "Australia", "established": 2023 }, "pricing_plan": { "monthly": 600000, "yearly": 6000000, "currency": "IDR" }, "technical_specs": { "storage": "Git-based", "uptime": "99.5%", "support": "Community" }, "features": ["Cross-platform", "Hot Reload", "UI Components"] },
+  { "id": 10, "service_name": "Data Analytics Suite", "category": "SaaS", "status": "Available", "image": "https://picsum.photos/seed/data/400/250", "provider_info": { "name": "InsightPro", "location": "USA", "established": 2016 }, "pricing_plan": { "monthly": 1200000, "yearly": 12000000, "currency": "IDR" }, "technical_specs": { "storage": "500GB", "uptime": "99.9%", "support": "Business" }, "features": ["Big Data Support", "Visualizer", "AI Forecast"] },
+  { "id": 11, "service_name": "Virtual Office VR", "category": "SaaS", "status": "Beta", "image": "https://picsum.photos/seed/vr/400/250", "provider_info": { "name": "MetaSpace", "location": "USA", "established": 2021 }, "pricing_plan": { "monthly": 400000, "yearly": 4000000, "currency": "IDR" }, "technical_specs": { "storage": "Cloud", "uptime": "95.0%", "support": "Discord" }, "features": ["Avatar Custom", "3D Meeting", "Spatial Audio"] },
+  { "id": 12, "service_name": "Blockchain Ledger", "category": "Infrastructure", "status": "Available", "image": "https://picsum.photos/seed/crypto/400/250", "provider_info": { "name": "ChainSafe", "location": "Switzerland", "established": 2018 }, "pricing_plan": { "monthly": 900000, "yearly": 9000000, "currency": "IDR" }, "technical_specs": { "storage": "Distributed", "uptime": "100%", "support": "SLA 1" }, "features": ["Smart Contract", "Immutable", "Private Node"] },
+  { "id": 13, "service_name": "UI/UX Design Kit", "category": "Design", "status": "Available", "image": "https://picsum.photos/seed/design/400/250", "provider_info": { "name": "PixelPerfect", "location": "France", "established": 2014 }, "pricing_plan": { "monthly": 150000, "yearly": 1200000, "currency": "IDR" }, "technical_specs": { "storage": "5GB", "uptime": "99.9%", "support": "Email" }, "features": ["Figma Plugin", "Design System", "Icons Set"] },
+  { "id": 14, "service_name": "CDN Accelerator", "category": "Infrastructure", "status": "Available", "image": "https://picsum.photos/seed/cdn/400/250", "provider_info": { "name": "FastEdge", "location": "Singapore", "established": 2019 }, "pricing_plan": { "monthly": 550000, "yearly": 5500000, "currency": "IDR" }, "technical_specs": { "storage": "Edge Cache", "uptime": "99.99%", "support": "24/7" }, "features": ["Global Edge", "WAF", "Image Opt"] },
+  { "id": 15, "service_name": "HR Management System", "category": "SaaS", "status": "Available", "image": "https://picsum.photos/seed/hr/400/250", "provider_info": { "name": "PeopleForce", "location": "Indonesia", "established": 2020 }, "pricing_plan": { "monthly": 350000, "yearly": 3500000, "currency": "IDR" }, "technical_specs": { "storage": "20GB", "uptime": "99.5%", "support": "WA Support" }, "features": ["Payroll", "Attendance", "E-Contract"] },
+  { "id": 16, "service_name": "Game Server Hosting", "category": "Infrastructure", "status": "Available", "image": "https://picsum.photos/seed/game/400/250", "provider_info": { "name": "FragNet", "location": "Sweden", "established": 2013 }, "pricing_plan": { "monthly": 200000, "yearly": 2000000, "currency": "IDR" }, "technical_specs": { "storage": "100GB", "uptime": "99.7%", "support": "Forum" }, "features": ["Low Latency", "Mod Support", "Easy Panel"] },
+  { "id": 17, "service_name": "Legal Tech Bot", "category": "Consulting", "status": "Available", "image": "https://picsum.photos/seed/legal/400/250", "provider_info": { "name": "LawTech AI", "location": "UK", "established": 2021 }, "pricing_plan": { "monthly": 750000, "yearly": 7500000, "currency": "IDR" }, "technical_specs": { "storage": "Cloud", "uptime": "99.0%", "support": "Ticket" }, "features": ["Doc Analysis", "Case Search", "Drafting"] },
+  { "id": 18, "service_name": "Video Streaming Engine", "category": "Infrastructure", "status": "Limited", "image": "https://picsum.photos/seed/video/400/250", "provider_info": { "name": "StreamLine", "location": "USA", "established": 2017 }, "pricing_plan": { "monthly": 1800000, "yearly": 18000000, "currency": "IDR" }, "technical_specs": { "storage": "500GB VOD", "uptime": "99.9%", "support": "Account Manager" }, "features": ["Transcoding", "HLS Stream", "DRM"] },
+  { "id": 19, "service_name": "IoT Dashboard", "category": "SaaS", "status": "Available", "image": "https://picsum.photos/seed/iot/400/250", "provider_info": { "name": "SensorLink", "location": "Germany", "established": 2019 }, "pricing_plan": { "monthly": 450000, "yearly": 4500000, "currency": "IDR" }, "technical_specs": { "storage": "Log Data", "uptime": "99.8%", "support": "Community" }, "features": ["Real-time Map", "Alerting", "MQTT Support"] },
+  { "id": 20, "service_name": "Chatbot Builder", "category": "Development", "status": "Available", "image": "https://picsum.photos/seed/chatbot/400/250", "provider_info": { "name": "TalkFlow", "location": "Spain", "established": 2020 }, "pricing_plan": { "monthly": 250000, "yearly": 2500000, "currency": "IDR" }, "technical_specs": { "storage": "Cloud", "uptime": "99.5%", "support": "Chat" }, "features": ["Omnichannel", "NLP Engine", "No-Code"] }
+]
