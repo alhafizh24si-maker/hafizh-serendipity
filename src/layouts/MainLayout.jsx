@@ -9,44 +9,50 @@ export default function MainLayout() {
   return (
     <div 
       id="app-container" 
-      className="bg-[#F8FAFC] min-h-screen flex font-poppins"
+      /* Mengubah bg ke #FDF8F4 agar seragam dengan Header dan Dashboard */
+      className="bg-[#FDF8F4] min-h-screen flex font-sans selection:bg-orange-100"
     >
       {/* Sidebar: 
-        Kita biarkan tetap fixed atau sesuai flex-basis dari komponen Sidebar.
-        Pastikan Sidebar memiliki border-r untuk pemisahan yang bersih.
+        Pastikan Sidebar menggunakan bg yang senada atau putih bersih 
+        dengan rounded corners yang besar jika memungkinkan.
       */}
       <Sidebar />
       
-      {/* Main Content Area:
-        Menggunakan flex-1 agar mengambil sisa ruang layar.
-      */}
+      {/* Main Content Area */}
       <div 
         id="main-content" 
-        className="flex-1 flex flex-col min-w-0 overflow-hidden"
+        className="flex-1 flex flex-col min-w-0"
       >
         {/* Header: 
-          Berisi Search Bar dan Profil. Kita buat sticky agar 
-          navigasi atas selalu tersedia saat scrolling.
+          Dibuat sticky dengan background yang sama agar menyatu.
+          Backdrop-blur memberikan efek kaca modern saat konten di-scroll di bawahnya.
         */}
-        <header className="sticky top-0 z-[40] bg-[#F8FAFC]/80 backdrop-blur-md">
+        <header className="sticky top-0 z-[40] bg-[#FDF8F4]/80 backdrop-blur-xl">
           <Header />
         </header>
 
         {/* Content Wrapper:
-          Di sinilah halaman-halaman seperti Dashboard, Mechanics, 
-          dan lainnya akan muncul melalui <Outlet />.
+          Menghilangkan padding samping yang terlalu ketat agar dashboard 
+          bisa mengatur jaraknya sendiri (lebih fleksibel).
         */}
         <main 
           id="page-wrapper" 
-          className="flex-1 overflow-y-auto px-2 pb-8"
+          className="flex-1 overflow-y-auto pb-10"
         >
-          {/* Outlet akan merender component sesuai route di App.jsx */}
+          {/* Outlet merender Dashboard, Mechanics, dll */}
           <Outlet />
         </main>
         
-        {/* Footer Kecil Internal (Optional) */}
-        <footer className="px-8 py-4 text-center text-[10px] text-gray-400 border-t border-gray-100 bg-white/50">
-          BengkelGo Fleet Management System v2.0.4 • Made with precision
+        {/* Footer:
+          Disesuaikan dengan gaya Reztro yang minimalis.
+          Menggunakan font-black untuk uppercase agar terlihat seperti desain editorial.
+        */}
+        <footer className="px-10 py-6 text-center">
+          <div className="border-t border-orange-100/50 pt-6">
+            <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">
+              BengkelGo Fleet Management System <span className="text-[#FF6B2C]/40">•</span> v2.0.4
+            </p>
+          </div>
         </footer>
       </div>
     </div>

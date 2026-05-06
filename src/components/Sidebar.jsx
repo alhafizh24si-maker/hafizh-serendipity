@@ -2,120 +2,112 @@ import {
   FaWrench, 
   FaUsers, 
   FaPlus, 
-  FaHistory, 
-  FaExclamationTriangle, 
   FaTools,
   FaMapMarkerAlt,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaCog
 } from "react-icons/fa";
 import { MdSpaceDashboard } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
-  // Styling navigasi yang disesuaikan dengan warna BengkelGo (Emerald & Blue)
+  // Styling navigasi mengikuti gaya Reztro: Pill-shaped, Soft Orange Tint
   const menuClass = ({ isActive }) =>
-    `flex cursor-pointer items-center rounded-xl p-4 space-x-2 transition-all duration-300
+    `flex cursor-pointer items-center rounded-2xl p-4 mb-1 space-x-4 transition-all duration-300 group
     ${isActive ? 
-        "text-emerald-600 bg-emerald-50 font-bold shadow-sm border-r-4 border-emerald-500 rounded-r-none" : 
-        "text-gray-500 hover:text-emerald-500 hover:bg-gray-50"
+        "text-[#FF6B2C] bg-[#FF6B2C]/10 font-bold" : 
+        "text-[#666666] hover:text-[#FF6B2C] hover:bg-[#FDF8F4]"
     }`;
 
   return (
     <div
       id="sidebar"
-      className="flex min-h-screen w-72 flex-col bg-white p-6 shadow-xl border-r border-gray-100"
+      className="flex min-h-screen w-72 flex-col bg-white p-6 border-r border-gray-100"
     >
-      {/* Logo Section */}
-      <div id="sidebar-logo" className="flex items-center space-x-3 mb-10 px-2">
-        <div className="bg-blue-900 p-2 rounded-lg text-white">
-          <FaWrench size={24} />
+      {/* Logo Section - Lebih Minimalis & Clean */}
+      <div id="sidebar-logo" className="flex items-center space-x-3 mb-12 px-2">
+        <div className="bg-[#FF6B2C] p-2.5 rounded-xl text-white shadow-lg shadow-orange-100">
+          <FaWrench size={20} />
         </div>
         <div className="flex flex-col">
-          <span className="font-extrabold text-2xl tracking-tight text-blue-900">
-            BENGKEL<span className="text-emerald-500">GO</span>
-          </span>
-          <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">
-            Admin Panel
+          <span className="font-bold text-2xl tracking-tighter text-[#1A1A1A]">
+            BengkelGo<span className="text-[#FF6B2C]">Fix</span>
           </span>
         </div>
       </div>
 
       {/* Main Menu Navigation */}
       <div id="sidebar-menu" className="flex-1 overflow-y-auto">
-        <ul id="menu-list" className="space-y-2">
-          <p className="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Main Menu</p>
+        <ul id="menu-list" className="space-y-1">
+          {/* Label kategori lebih subtle */}
+          <p className="px-4 text-[11px] font-bold text-gray-300 uppercase tracking-[0.2em] mb-4">
+            Menu Utama
+          </p>
           
           <li>
             <NavLink to="/" className={menuClass}>
               <MdSpaceDashboard className="text-xl" />
-              <span>Dashboard</span>
+              <span className="text-sm">Dashboard</span>
             </NavLink>
           </li>
           
           <li>
             <NavLink to="/orders" className={menuClass}>
               <FaTools className="text-xl" /> 
-              <span>Active Services</span>
+              <span className="text-sm">Layanan Aktif</span>
             </NavLink>
           </li>
 
           <li>
             <NavLink to="/mechanics" className={menuClass}>
               <FaUsers className="text-xl" /> 
-              <span>Mechanics</span>
+              <span className="text-sm">Mekanik</span>
             </NavLink>
           </li>
 
-
-          {/* System Management Section */}
-          <div className="pt-6 pb-2 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            System
-          </div>
-          
           <li>
             <NavLink to="/locations" className={menuClass}>
               <FaMapMarkerAlt className="text-xl" /> 
-              <span>Coverage Area</span>
+              <span className="text-sm">Area Layanan</span>
             </NavLink>
           </li>
         </ul>
       </div>
 
-      {/* Bottom Profile / Footer Card */}
-      <div id="sidebar-footer" className="mt-auto">
+      {/* Bottom Profile Section - Mengikuti gaya "User Card" Reztro */}
+      <div id="sidebar-footer" className="mt-auto pt-6 border-t border-gray-50">
         <div
           id="admin-card"
-          className="bg-blue-900 p-4 rounded-2xl shadow-lg relative overflow-hidden group"
+          className="bg-[#FDF8F4] p-4 rounded-[24px] border border-orange-100/50 mb-6"
         >
-          {/* Subtle background decoration */}
-          <div className="absolute -right-4 -top-4 text-white/10 group-hover:scale-110 transition-transform">
-             <FaWrench size={80} />
-          </div>
-
-          <div className="flex items-center space-x-3 relative z-10">
-            <img
-              className="w-10 h-10 rounded-full border-2 border-emerald-500 object-cover"
-              src="https://randomuser.me/api/portraits/men/32.jpg"
-              alt="Admin Profile"
-            />
-            <div className="flex flex-col">
-              <span className="text-white text-xs font-bold">Admin Bengkel</span>
-              <span className="text-emerald-400 text-[10px]">Super Admin</span>
+          <div className="flex items-center space-x-3">
+            <div className="relative">
+              <img
+                className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
+                src="https://randomuser.me/api/portraits/men/32.jpg"
+                alt="Admin Profile"
+              />
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
             </div>
-            <button className="ml-auto text-white/50 hover:text-white transition">
-               <FaSignOutAlt size={14} />
+            <div className="flex flex-col flex-1 overflow-hidden">
+              <span className="text-[#1A1A1A] text-xs font-bold truncate">Orlando L.</span>
+              <span className="text-[#666666] text-[10px] font-medium">Super Admin</span>
+            </div>
+            <button className="p-2 text-gray-400 hover:text-[#FF6B2C] transition-colors">
+              <FaCog size={14} />
             </button>
           </div>
-
-          <button className="w-full mt-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 transition-colors">
-            <FaPlus size={10} />
-            <span>New Order</span>
-          </button>
         </div>
 
+        {/* Logout Button: Gaya Minimalis */}
+        <button className="w-full flex items-center justify-center space-x-2 py-3 text-gray-400 hover:text-red-500 font-bold text-xs transition-colors group">
+          <FaSignOutAlt className="group-hover:-translate-x-1 transition-transform" size={14} />
+          <span>Keluar Sistem</span>
+        </button>
+
         <div className="mt-4 text-center">
-            <p className="text-[10px] text-gray-400 font-medium">
-              &copy; 2026 BengkelGo System v2.0
+            <p className="text-[10px] text-gray-300 font-medium tracking-tight">
+              &copy; 2026 BengkelGo v2.0
             </p>
         </div>
       </div>
