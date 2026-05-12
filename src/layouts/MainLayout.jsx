@@ -11,6 +11,7 @@ export default function MainLayout() {
       id="app-container" 
       /* Mengubah bg ke #FDF8F4 agar seragam dengan Header dan Dashboard */
       className="bg-[#FDF8F4] min-h-screen flex font-sans selection:bg-orange-100"
+      
     >
       {/* Sidebar: 
         Pastikan Sidebar menggunakan bg yang senada atau putih bersih 
