@@ -12,7 +12,7 @@ export default function Header() {
             
             {/* --- LEFT: Welcome Text --- */}
             <div className="hidden xl:block">
-                <h1 className="text-3xl font-black text-[#1A1A1A] tracking-tight">Dashboard</h1>
+                <h1 className="text-3xl font-black text-[#1A1A1A] tracking-tight">BengkelGO</h1>
                 <p className="text-xs text-[#666666] font-medium mt-1">Hello Orlando, welcome back!</p>
             </div>
 

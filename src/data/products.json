@@ -1,0 +1,7 @@
+[
+  { "id": 1, "title": "Oli Shell Helix HX8 5W-30", "code": "OIL-001", "category": "Pelumas", "brand": "Shell", "price": 450000, "stock": 50, "description": "Oli mesin sintetik penuh untuk performa maksimal dan perlindungan mesin." },
+  { "id": 2, "title": "Kampas Rem Depan Brembo", "code": "BRK-002", "category": "Sparepart", "brand": "Brembo", "price": 850000, "stock": 15, "description": "Daya pengereman superior untuk keamanan berkendara di segala kondisi." },
+  { "id": 3, "title": "Filter Udara Racing", "code": "FLT-003", "category": "Sparepart", "brand": "Ferrox", "price": 1200000, "stock": 10, "description": "Meningkatkan debit udara masuk untuk akselerasi yang lebih responsif." },
+  { "id": 4, "title": "Kunci Torsi Digital", "code": "TLS-004", "category": "Tools", "brand": "Tekiro", "price": 2500000, "stock": 5, "description": "Alat presisi tinggi untuk pengencangan baut sesuai spesifikasi pabrik." },
+  { "id": 5, "title": "Ban Michelin Pilot Sport 5", "code": "TYR-005", "category": "Ban", "brand": "Michelin", "price": 1850000, "stock": 20, "description": "Ban performa tinggi dengan daya cengkram luar biasa di jalan basah maupun kering." }
+]

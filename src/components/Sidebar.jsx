@@ -5,7 +5,8 @@ import {
   FaTools,
   FaMapMarkerAlt,
   FaSignOutAlt,
-  FaCog
+  FaCog,
+  FaBox // Icon tambahan untuk Inventaris/Products
 } from "react-icons/fa";
 import { MdSpaceDashboard } from "react-icons/md";
 import { NavLink } from "react-router-dom";
@@ -24,7 +25,7 @@ export default function Sidebar() {
       id="sidebar"
       className="flex min-h-screen w-72 flex-col bg-white p-6 border-r border-gray-100"
     >
-      {/* Logo Section - Lebih Minimalis & Clean */}
+      {/* Logo Section - BengkelGoFix */}
       <div id="sidebar-logo" className="flex items-center space-x-3 mb-12 px-2">
         <div className="bg-[#FF6B2C] p-2.5 rounded-xl text-white shadow-lg shadow-orange-100">
           <FaWrench size={20} />
@@ -39,7 +40,6 @@ export default function Sidebar() {
       {/* Main Menu Navigation */}
       <div id="sidebar-menu" className="flex-1 overflow-y-auto">
         <ul id="menu-list" className="space-y-1">
-          {/* Label kategori lebih subtle */}
           <p className="px-4 text-[11px] font-bold text-gray-300 uppercase tracking-[0.2em] mb-4">
             Menu Utama
           </p>
@@ -55,6 +55,14 @@ export default function Sidebar() {
             <NavLink to="/orders" className={menuClass}>
               <FaTools className="text-xl" /> 
               <span className="text-sm">Layanan Aktif</span>
+            </NavLink>
+          </li>
+
+          {/* MENU BARU: INVENTARIS/PRODUCTS */}
+          <li>
+            <NavLink to="/products" className={menuClass}>
+              <FaBox className="text-xl" /> 
+              <span className="text-sm">Inventaris</span>
             </NavLink>
           </li>
 
@@ -74,7 +82,7 @@ export default function Sidebar() {
         </ul>
       </div>
 
-      {/* Bottom Profile Section - Mengikuti gaya "User Card" Reztro */}
+      {/* Bottom Profile Section */}
       <div id="sidebar-footer" className="mt-auto pt-6 border-t border-gray-50">
         <div
           id="admin-card"
@@ -99,7 +107,6 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Logout Button: Gaya Minimalis */}
         <button className="w-full flex items-center justify-center space-x-2 py-3 text-gray-400 hover:text-red-500 font-bold text-xs transition-colors group">
           <FaSignOutAlt className="group-hover:-translate-x-1 transition-transform" size={14} />
           <span>Keluar Sistem</span>
