@@ -43,13 +43,13 @@ export default function DashboardAdmin() {
     ];
 
     return (
-        /* Container: Menggunakan bg-slate-50 agar card putih terlihat kontras */
-        <div id="dashboard-container" className="pb-10 bg-[#F8F9FA] min-h-screen font-jakarta selection:bg-orange-200">
+        /* Container: Menggunakan bg-[#FCF8F3] (warna krem pucat) */
+        <div id="dashboard-container" className="pb-10 bg-[#FCF8F3] min-h-screen font-jakarta selection:bg-orange-200">
             
             {/* 1. STATS SECTION */}
             <div className="p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                 {stats.map((item) => (
-                    <div key={item.id} className="bg-white rounded-[24px] shadow-md hover:shadow-lg transition-shadow p-6 flex items-center justify-between border border-gray-100">
+                    <div key={item.id} className="bg-white rounded-[24px] shadow-md hover:shadow-lg transition-shadow p-6 flex items-center justify-between border border-gray-100/50">
                         <div className="flex flex-col">
                             <span className="text-gray-400 font-medium text-[10px] uppercase tracking-widest mb-1">{item.label}</span>
                             <span className="text-2xl font-black text-gray-800 tracking-tight">{item.count}</span>
@@ -63,7 +63,7 @@ export default function DashboardAdmin() {
 
             {/* 2. REVENUE & CATEGORIES */}
             <div className="px-8 mb-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 bg-white p-8 rounded-[32px] shadow-md border border-gray-100">
+                <div className="lg:col-span-2 bg-white p-8 rounded-[32px] shadow-md border border-gray-100/50">
                     <div className="flex justify-between items-center mb-8">
                         <div>
                             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Revenue</p>
@@ -94,7 +94,7 @@ export default function DashboardAdmin() {
                     </div>
                 </div>
 
-                <div className="bg-white p-8 rounded-[32px] shadow-md border border-gray-100">
+                <div className="bg-white p-8 rounded-[32px] shadow-md border border-gray-100/50">
                     <h3 className="font-bold text-gray-800 mb-6">Top Categories</h3>
                     <div className="h-[200px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -121,7 +121,7 @@ export default function DashboardAdmin() {
 
             {/* 3. STAFF & ORDERS OVERVIEW */}
             <div className="px-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 bg-white p-8 rounded-[32px] shadow-md border border-gray-100">
+                <div className="lg:col-span-2 bg-white p-8 rounded-[32px] shadow-md border border-gray-100/50">
                     <h3 className="font-bold text-gray-800 mb-8">Orders Overview</h3>
                     <div className="h-[200px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -138,7 +138,7 @@ export default function DashboardAdmin() {
                     </div>
                 </div>
 
-                <div className="bg-white p-8 rounded-[32px] shadow-md border border-gray-100">
+                <div className="bg-white p-8 rounded-[32px] shadow-md border border-gray-100/50">
                     <h3 className="font-bold text-gray-800 mb-6">Mekanik Teraktif</h3>
                     <div className="space-y-5">
                         {[
@@ -165,7 +165,7 @@ export default function DashboardAdmin() {
 
             {/* 4. RECENT ORDERS & REVIEWS */}
             <div className="px-8 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 bg-white p-8 rounded-[32px] shadow-md border border-gray-100">
+                <div className="lg:col-span-2 bg-white p-8 rounded-[32px] shadow-md border border-gray-100/50">
                     <div className="flex justify-between items-center mb-8">
                         <h3 className="font-black text-gray-800 tracking-tight">Recent Orders</h3>
                         <button className="text-[10px] font-black text-orange-600 uppercase tracking-widest bg-orange-50 px-4 py-2 rounded-xl hover:bg-orange-100 transition-colors">See All</button>
@@ -201,7 +201,7 @@ export default function DashboardAdmin() {
                     </div>
                 </div>
 
-                <div className="bg-white p-8 rounded-[32px] shadow-md border border-gray-100">
+                <div className="bg-white p-8 rounded-[32px] shadow-md border border-gray-100/50">
                     <h3 className="font-black text-gray-800 tracking-tight mb-8">Customer Reviews</h3>
                     <div className="space-y-6">
                         {[
