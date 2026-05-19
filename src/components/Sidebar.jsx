@@ -6,13 +6,13 @@ import {
   FaMapMarkerAlt,
   FaSignOutAlt,
   FaCog,
-  FaBox // Icon tambahan untuk Inventaris/Products
+  FaBox,
+  FaThLarge // <-- Import Icon Tambahan untuk Playground Komponen
 } from "react-icons/fa";
 import { MdSpaceDashboard } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
-  // Styling navigasi mengikuti gaya Reztro: Pill-shaped, Soft Orange Tint
   const menuClass = ({ isActive }) =>
     `flex cursor-pointer items-center rounded-2xl p-4 mb-1 space-x-4 transition-all duration-300 group
     ${isActive ? 
@@ -58,7 +58,6 @@ export default function Sidebar() {
             </NavLink>
           </li>
 
-          {/* MENU BARU: INVENTARIS/PRODUCTS */}
           <li>
             <NavLink to="/products" className={menuClass}>
               <FaBox className="text-xl" /> 
@@ -77,6 +76,16 @@ export default function Sidebar() {
             <NavLink to="/locations" className={menuClass}>
               <FaMapMarkerAlt className="text-xl" /> 
               <span className="text-sm">Area Layanan</span>
+            </NavLink>
+          </li>
+
+          {/* ========================================================
+              MENU BARU: PLAYGROUND KOMPENDIUM CRM (BENGKELGOFIX)
+             ======================================================== */}
+          <li>
+            <NavLink to="/components" className={menuClass}>
+              <FaThLarge className="text-xl" /> 
+              <span className="text-sm">Components</span>
             </NavLink>
           </li>
         </ul>
