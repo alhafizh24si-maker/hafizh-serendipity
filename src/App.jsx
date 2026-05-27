@@ -11,9 +11,12 @@ const Orders = React.lazy(() => import("./pages/Orders"));
 const Customers = React.lazy(() => import("./pages/Customers"));
 const Mechanics = React.lazy(() => import("./pages/Mechanics"));
 const CoverageArea = React.lazy(() => import("./pages/CoverageArea"));
-
-// --- LAZY IMPORT PLAYGROUND KOMPONEN BARU ---
 const ComponentsPage = React.lazy(() => import("./pages/Components"));
+
+// ========================================================
+// 🟢 1. LAZY IMPORT UNTUK HALAMAN MONITOR CRM BARU
+// ========================================================
+const MechanicCrmStatus = React.lazy(() => import("./components/MechanicCrmStatus"));
 
 const Products = React.lazy(() => import("./pages/Products"));
 const ProductsDetail = React.lazy(() => import("./pages/ProductsDetail"));
@@ -66,11 +69,12 @@ function App() {
           <Route path="/customers" element={<Customers />} />
           <Route path="/mechanics" element={<Mechanics />} />
           <Route path="/locations" element={<CoverageArea />} />
+          <Route path="/components" element={<ComponentsPage />} />
           
           {/* ========================================================
-              RUTE BARU: MENANGKAP PATH /components CRM BENGKELGOFIX
+              🟢 2. ROUTE BARU: MENCOCOKKAN PATH DARI SIDEBAR 
              ======================================================== */}
-          <Route path="/components" element={<ComponentsPage />} />
+          <Route path="/MechanicCrmStatus" element={<MechanicCrmStatus />} />
           
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductsDetail />} />
@@ -80,9 +84,9 @@ function App() {
         </Route>
 
         <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot" element={<Forgot />} />
+          <Route element={<Login />} path="/login" />
+          <Route element={<Register />} path="/register" />
+          <Route element={<Forgot />} path="/forgot" />
         </Route>
       </Routes>
     </Suspense>

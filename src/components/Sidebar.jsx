@@ -7,7 +7,8 @@ import {
   FaSignOutAlt,
   FaCog,
   FaBox,
-  FaThLarge // <-- Import Icon Tambahan untuk Playground Komponen
+  FaThLarge,
+  FaChartLine // 🟢 Import ikon tambahan untuk visualisasi CRM
 } from "react-icons/fa";
 import { MdSpaceDashboard } from "react-icons/md";
 import { NavLink } from "react-router-dom";
@@ -79,13 +80,26 @@ export default function Sidebar() {
             </NavLink>
           </li>
 
-          {/* ========================================================
-              MENU BARU: PLAYGROUND KOMPENDIUM CRM (BENGKELGOFIX)
-             ======================================================== */}
           <li>
             <NavLink to="/components" className={menuClass}>
               <FaThLarge className="text-xl" /> 
               <span className="text-sm">Components</span>
+            </NavLink>
+          </li>
+
+          {/* ========================================================
+              🟢 MENU BARU: OPERASIONAL UTILITAS CRM BENGKEL
+             ======================================================== */}
+          <div className="pt-6 my-2 border-t border-gray-100">
+            <p className="px-4 text-[11px] font-bold text-gray-300 uppercase tracking-[0.2em] mb-3">
+              Manajemen Sistem
+            </p>
+          </div>
+
+          <li>
+            <NavLink to="/MechanicCrmStatus" className={menuClass}>
+              <FaChartLine className="text-xl" /> 
+              <span className="text-sm">CRM Monitor</span>
             </NavLink>
           </li>
         </ul>
