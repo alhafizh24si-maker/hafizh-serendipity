@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { FaWrench, FaExclamationTriangle, FaCheckCircle, FaPlus } from 'react-icons/fa';
 
+import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+
 export default function MechanicCrmDashboard() {
-  // 🟢 STATE UTK KOMPONEN 2 (SWITCH) & 3 (ALERT)
   const [emergencyOnlyMode, setEmergencyOnlyMode] = useState(false);
-  
-  // 🟢 STATE UTK KOMPONEN 1 (PROGRESS)
   const [totalOrderan, setTotalOrderan] = useState(7);
   const batasKapasitasMax = 10;
   const persentaseBeban = (totalOrderan / batasKapasitasMax) * 100;
@@ -21,14 +22,14 @@ export default function MechanicCrmDashboard() {
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-900">GoFix CRM Monitor</h3>
-            <p className="text-xs text-gray-500">Tugas Pertemuan 11: Implementasi 3 Komponen UI Lanjutan</p>
+            <p className="text-xs text-gray-500">Tugas Pertemuan 11: Real Shadcn UI Implementation</p>
           </div>
         </div>
 
         <hr className="border-gray-100" />
 
         {/* ========================================================
-            1️⃣ KOMPONEN UI: PROGRESS (Slot Antrean Mekanik)
+            1️⃣ IMPLEMENTASI SHADCN UI: PROGRESS
            ======================================================== */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
@@ -40,33 +41,29 @@ export default function MechanicCrmDashboard() {
             </span>
           </div>
           
-          {/* Progress Component Track */}
-          <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden border border-gray-200/40">
-            {/* Progress Component Fill */}
-            <div 
-              className={`h-full transition-all duration-500 rounded-full ${
-                persentaseBeban >= 80 ? 'bg-red-500' : 'bg-[#FF6B2C]'
-              }`}
-              style={{ width: `${persentaseBeban}%` }}
-            />
-          </div>
+          {/* Komponen Asli Shadcn UI dengan kustomisasi warna bg fill oranye GoFix */}
+          <Progress 
+            value={persentaseBeban} 
+            className={`w-full h-3 bg-gray-100 border border-gray-200/40 [&>div]:transition-all [&>div]:duration-500 ${
+              persentaseBeban >= 80 ? '[&>div]:bg-red-500' : '[&>div]:bg-[#FF6B2C]'
+            }`} 
+          />
 
-          <div className="flex justify-between items-center pt-0.5">
+          <div className="flex justify-between items-center pt-1">
             <p className="text-[11px] text-gray-400 italic">
               {persentaseBeban >= 80 ? "*Mekanik kewalahan, antrean penuh!" : "*Kapasitas aman untuk menerima kendaraan."}
             </p>
             <button 
               onClick={() => setTotalOrderan(prev => (prev < batasKapasitasMax ? prev + 1 : 0))}
-              className="text-[10px] text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-md"
+              className="text-[10px] text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-md transition-colors"
             >
               <FaPlus className="text-[8px]" /> Tambah Orderan
             </button>
           </div>
         </div>
 
-
         {/* ========================================================
-            2️⃣ KOMPONEN UI: SWITCH / TOGGLE (Mode Layanan)
+            2️⃣ IMPLEMENTASI SHADCN UI: SWITCH
            ======================================================== */}
         <div className="space-y-2">
           <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">
@@ -78,25 +75,18 @@ export default function MechanicCrmDashboard() {
               <p className="text-[11px] text-gray-400">Batasi hanya untuk kendaraan mogok</p>
             </div>
             
-            {/* Switch Component Layout */}
-            <button
-              onClick={() => setEmergencyOnlyMode(!emergencyOnlyMode)}
-              className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-300 focus:outline-none ${
-                emergencyOnlyMode ? 'bg-red-500' : 'bg-gray-300'
-              }`}
-            >
-              <div
-                className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
-                  emergencyOnlyMode ? 'translate-x-5' : 'translate-x-0'
-                }`}
-              />
-            </button>
+            {/* Komponen Asli Shadcn UI */}
+            <Switch 
+              id="emergency-mode"
+              checked={emergencyOnlyMode}
+              onCheckedChange={setEmergencyOnlyMode}
+              className={`${emergencyOnlyMode ? 'data-[state=checked]:bg-red-500' : 'data-[state=unchecked]:bg-gray-300'}`}
+            />
           </div>
         </div>
 
-
         {/* ========================================================
-            3️⃣ KOMPONEN UI: ALERT (Notifikasi Status Dinamis)
+            3️⃣ IMPLEMENTASI SHADCN UI: ALERT
            ======================================================== */}
         <div className="space-y-2">
           <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">
@@ -104,27 +94,27 @@ export default function MechanicCrmDashboard() {
           </span>
           
           {emergencyOnlyMode ? (
-            /* Alert Variant Destructive / Warning */
-            <div className="bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-xl flex items-start space-x-3 animate-fade-in">
+            /* Alert Shadcn - Variant Destructive / Warning */
+            <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-900 rounded-xl flex items-start space-x-3">
               <FaExclamationTriangle className="text-red-500 text-lg mt-0.5 flex-shrink-0" />
               <div>
-                <h5 className="font-bold text-xs text-red-900">Sistem CRM Dibatasi</h5>
-                <p className="text-[11px] text-red-700 mt-0.5 leading-relaxed">
+                <AlertTitle className="font-bold text-xs text-red-900">Sistem CRM Dibatasi</AlertTitle>
+                <AlertDescription className="text-[11px] text-red-700 mt-0.5 leading-relaxed">
                   Booking servis reguler via aplikasi ditutup sementara. Alokasi mekanik dialihkan penuh ke tim penanganan darurat jalan raya.
-                </p>
+                </AlertDescription>
               </div>
-            </div>
+            </Alert>
           ) : (
-            /* Alert Variant Success / Normal */
-            <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 px-4 py-3 rounded-xl flex items-start space-x-3 animate-fade-in">
+            /* Alert Shadcn - Variant Success / Normal */
+            <Alert className="bg-emerald-50 border-emerald-200 text-emerald-900 rounded-xl flex items-start space-x-3">
               <FaCheckCircle className="text-emerald-500 text-lg mt-0.5 flex-shrink-0" />
               <div>
-                <h5 className="font-bold text-xs text-emerald-900">Jalur Antrean Normal</h5>
-                <p className="text-[11px] text-emerald-700 mt-0.5 leading-relaxed">
+                <AlertTitle className="font-bold text-xs text-emerald-900">Jalur Antrean Normal</AlertTitle>
+                <AlertDescription className="text-[11px] text-emerald-700 mt-0.5 leading-relaxed">
                   Semua kategori servis berjalan lancar. Sistem CRM menyalurkan antrean pekerjaan secara merata ke seluruh mekanik standby.
-                </p>
+                </AlertDescription>
               </div>
-            </div>
+            </Alert>
           )}
         </div>
 
