@@ -1,13 +1,26 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState, useRef } from "react"; // HOOK: Mengimport useState dan useRef
 import products from "../data/products.json";
-import { FaArrowLeft, FaTools } from "react-icons/fa";
+import { FaArrowLeft, FaTools, FaFolderPlus } from "react-icons/fa";
 
 export default function ProductsDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  // Mencari data dan memastikan tipe data ID cocok
+  // HOOK: useState untuk menyimpan catatan lokasi rak sparepart
+  const [rackLocation, setRackLocation] = useState("");
+  
+  // HOOK: useRef untuk memegang kendali atas DOM input lokasi rak
+  const noteInputRef = useRef(null);
+
   const product = products.find((p) => p.id === parseInt(id));
+
+  // Fungsi memindahkan fokus kursor secara paksa ke input text menggunakan ref
+  const handleManageStockClick = () => {
+    noteInputRef.current.focus();
+    // Efek visual tambahan: memberikan style border highlight saat difokuskan
+    noteInputRef.current.classList.add("border-[#FF6B2C]");
+  };
 
   if (!product) return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#FCF8F3]">
@@ -18,7 +31,6 @@ export default function ProductsDetail() {
 
   return (
     <div className="bg-[#FCF8F3] min-h-screen p-10 font-jakarta">
-      {/* Tombol Kembali */}
       <button 
         onClick={() => navigate(-1)} 
         className="flex items-center gap-2 text-gray-400 hover:text-[#FF6B2C] mb-8 transition-all group"
@@ -27,10 +39,8 @@ export default function ProductsDetail() {
         <span className="text-xs font-black uppercase tracking-widest">Kembali ke Inventaris</span>
       </button>
 
-      {/* Card Utama */}
       <div className="max-w-5xl bg-white rounded-[3rem] border border-orange-100/30 shadow-2xl shadow-orange-900/5 overflow-hidden flex flex-col md:flex-row mx-auto">
         
-        {/* Sisi Kiri: Gambar Produk */}
         <div className="md:w-1/2 bg-gradient-to-br from-[#FFF9F3] to-white p-8 flex items-center justify-center border-r border-orange-50/50">
           <div className="relative w-full aspect-square bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-orange-50 group">
             {product.image ? (
@@ -39,19 +49,17 @@ export default function ProductsDetail() {
                 alt={product.title} 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 onError={(e) => {
-                  e.target.style.display = 'none'; // Sembunyikan jika link mati
-                  e.target.nextSibling.style.display = 'flex'; // Munculkan icon fallback
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
                 }}
               />
             ) : null}
-            {/* Fallback Icon jika gambar tidak ada atau error */}
             <div className="hidden absolute inset-0 flex items-center justify-center bg-gray-50">
               <FaTools size={80} className="text-orange-100" />
             </div>
           </div>
         </div>
 
-        {/* Sisi Kanan: Detail Informasi */}
         <div className="md:w-1/2 p-12 flex flex-col justify-center">
           <div className="flex items-center gap-3 mb-6">
             <span className="bg-orange-50 text-[#FF6B2C] text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">
@@ -63,12 +71,11 @@ export default function ProductsDetail() {
           <h1 className="text-3xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
             {product.title}
           </h1>
-          <p className="text-gray-500 text-sm leading-relaxed mb-8">
+          <p className="text-gray-500 text-sm leading-relaxed mb-6">
             {product.description}
           </p>
 
-          {/* Info Grid */}
-          <div className="grid grid-cols-2 gap-4 mb-10">
+          <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="bg-[#FAF7F2] p-5 rounded-3xl border border-orange-50/50">
               <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Brand</p>
               <p className="font-bold text-gray-900">{product.brand}</p>
@@ -81,16 +88,35 @@ export default function ProductsDetail() {
             </div>
           </div>
 
-          {/* Pricing & Button */}
-          <div className="pt-8 border-t border-gray-100 flex items-center justify-between">
+          {/* FITUR BARU: Form Lokasi Rak Inventaris yang dikontrol oleh useRef */}
+          <div className="mb-6 bg-orange-50/30 p-4 rounded-2xl border border-orange-100/40">
+            <label className="text-[9px] font-black text-[#FF6B2C] uppercase tracking-widest block mb-1.5">
+              Lokasi Penyimpanan Rak (Catatan CRM)
+            </label>
+            <input 
+              ref={noteInputRef} // HOOK: Mengunci elemen DOM input ini
+              type="text"
+              placeholder="Belum diatur (Klik Kelola Stok di bawah)"
+              value={rackLocation}
+              onChange={(e) => setRackLocation(e.target.value)}
+              className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold text-gray-800 focus:outline-none transition-all"
+            />
+          </div>
+
+          <div className="pt-6 border-t border-gray-100 flex items-center justify-between">
             <div>
               <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Harga Estimasi</p>
               <p className="text-3xl font-black text-[#FF6B2C]">
                 Rp {product.price.toLocaleString('id-ID')}
               </p>
             </div>
-            <button className="bg-[#FF6B2C] text-white px-8 py-4 rounded-[1.5rem] font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-orange-200 hover:bg-[#e85a1f] active:scale-95 transition-all">
-              Kelola Stok
+            
+            {/* Pemicu useRef saat diklik */}
+            <button 
+              onClick={handleManageStockClick}
+              className="bg-[#FF6B2C] text-white px-8 py-4 rounded-[1.5rem] font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-orange-200 hover:bg-[#e85a1f] active:scale-95 transition-all flex items-center gap-2"
+            >
+              <FaFolderPlus /> Kelola Stok
             </button>
           </div>
         </div>
