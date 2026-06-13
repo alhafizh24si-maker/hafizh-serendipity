@@ -33,51 +33,55 @@ export default function Products() {
   );
 
   return (
-    <div className="bg-[#FDF8F4] min-h-screen">
+    /* 🟢 REVISI LATAR BELAKANG UTAMA: Diubah menjadi bg-white bersih sesuai permintaan */
+    <div className="bg-white min-h-screen font-jakarta selection:bg-orange-200">
       <PageHeader title="Inventaris Sparepart" breadcrumb={["Dashboard", "Inventory"]} />
       
-      <div className="px-10 py-4">
-        {/* FITUR BARU: Search Bar memanfaatkan useState */}
+      <div className="px-10 py-6">
+        {/* FITUR SEARCH BAR: Tetap interaktif memicu re-render pengetikan */}
         <div className="max-w-md mb-6 relative flex items-center">
           <input 
             type="text"
             placeholder="Cari sparepart atau kode item..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)} // Mengubah state query setiap ada ketikan
-            className="w-full bg-white border border-orange-100 rounded-2xl px-5 py-3 pl-12 text-sm focus:outline-none focus:border-[#FF6B2C] shadow-sm font-medium text-gray-800"
+            className="w-full bg-[#F8FAFC] border border-gray-100 rounded-2xl px-5 py-3 pl-12 text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-[#FF6B2C]/20 focus:border-[#FF6B2C] shadow-sm font-medium text-gray-800 transition-all"
           />
-          <FaSearch className="absolute left-5 text-gray-300" size={14} />
+          <FaSearch className="absolute left-5 text-gray-400" size={14} />
         </div>
 
-        <div className="bg-white rounded-[2.5rem] shadow-sm border border-orange-100/50 overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-[#FDF8F4]/50 border-b border-orange-50">
+        {/* 🟢 KONTAINER DATA TABEL: Dibuat kontras bersih dengan border halus abu-abu modern */}
+        <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            {/* Header tabel disesuaikan dengan skema warna netral */}
+            <thead className="bg-[#F8FAFC] border-b border-gray-100">
               <tr>
-                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Item Bengkel</th>
-                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Stok</th>
-                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Kategori</th>
-                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Harga Satuan</th>
+                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-wider">Item Bengkel</th>
+                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-wider text-center">Stok</th>
+                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-wider">Kategori</th>
+                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-wider text-right">Harga Satuan</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-orange-50/50">
+            <tbody className="divide-y divide-gray-50 text-sm">
               {isLoading ? (
                 <tr>
-                  <td colSpan="4" className="px-8 py-10 text-center text-sm text-gray-400 italic">
+                  <td colSpan="4" className="px-8 py-12 text-center text-sm text-gray-400 italic bg-white">
                     Menghubungkan ke gudang database BengkelGo...
                   </td>
                 </tr>
               ) : filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-8 py-10 text-center text-sm text-gray-400 italic">
+                  <td colSpan="4" className="px-8 py-12 text-center text-sm text-gray-400 italic bg-white">
                     Sparepart tidak ditemukan atau belum terdaftar.
                   </td>
                 </tr>
               ) : (
                 filteredProducts.map((item) => (
-                  <tr key={item.id} className="hover:bg-orange-50/20 transition-all duration-300 group">
+                  <tr key={item.id} className="hover:bg-[#F8FAFC]/60 transition group bg-white">
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl overflow-hidden border border-orange-100 bg-gray-50 flex-shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                        {/* Frame thumbnail gambar produk */}
+                        <div className="w-14 h-14 rounded-2xl overflow-hidden border border-gray-100 bg-[#F8FAFC] flex-shrink-0 shadow-sm group-hover:scale-105 transition-transform">
                           <img 
                             src={item.image} 
                             alt={item.title} 
@@ -86,34 +90,35 @@ export default function Products() {
                           />
                         </div>
                         <div className="flex flex-col">
-                          <Link to={`/products/${item.id}`} className="font-bold text-gray-900 group-hover:text-[#FF6B2C] transition-colors line-clamp-1">
+                          {/* Komponen Link Router internal */}
+                          <Link to={`/products/${item.id}`} className="font-bold text-gray-800 group-hover:text-[#FF6B2C] transition-colors line-clamp-1 text-sm">
                             {item.title}
                           </Link>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[9px] font-black text-gray-300 uppercase">{item.code}</span>
-                            <span className="text-[9px] font-bold text-gray-400">•</span>
-                            <span className="text-[10px] text-gray-500 italic font-medium line-clamp-1">{item.brand}</span>
+                            <span className="text-[9px] font-mono font-black text-gray-400 uppercase tracking-wider">{item.code}</span>
+                            <span className="text-[9px] font-bold text-gray-300">•</span>
+                            <span className="text-[10px] text-gray-400 italic font-medium line-clamp-1">{item.brand}</span>
                           </div>
                         </div>
                       </div>
                     </td>
 
                     <td className="px-8 py-5 text-center">
-                      <span className={`text-xs font-bold ${item.stock < 10 ? 'text-red-500' : 'text-gray-600'}`}>
+                      <span className={`text-xs font-bold ${item.stock < 10 ? 'text-rose-500 font-black' : 'text-gray-600'}`}>
                         {item.stock} <span className="text-[10px] font-medium text-gray-400">Pcs</span>
                       </span>
                     </td>
 
                     <td className="px-8 py-5">
-                      <span className="bg-orange-50 text-[#FF6B2C] text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-tighter border border-orange-100">
+                      <span className="bg-orange-50 text-[#FF6B2C] text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-wider border border-orange-200/30">
                         {item.category}
                       </span>
                     </td>
 
-                    <td className="px-8 py-5 text-right font-black text-gray-900">
+                    <td className="px-8 py-5 text-right font-black text-gray-800 text-sm">
                       <div className="flex flex-col items-end">
                         <span>Rp {item.price.toLocaleString('id-ID')}</span>
-                        <span className="text-[8px] text-gray-400 font-medium">Inc. PPN 11%</span>
+                        <span className="text-[8px] text-gray-400 font-medium tracking-wide mt-0.5">Inc. PPN 11%</span>
                       </div>
                     </td>
                   </tr>

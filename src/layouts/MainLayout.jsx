@@ -9,13 +9,11 @@ export default function MainLayout() {
   return (
     <div 
       id="app-container" 
-      /* Mengubah bg ke #FDF8F4 agar seragam dengan Header dan Dashboard */
-      className="bg-[#FDF8F4] min-h-screen flex font-sans selection:bg-orange-100"
-      
+      /* 🟢 PERBAIKAN 1: Mengubah bg ke #F8FAFC agar seragam dengan abu-abu terang Header */
+      className="bg-[#F8FAFC] min-h-screen flex font-sans selection:bg-orange-100"
     >
       {/* Sidebar: 
-        Pastikan Sidebar menggunakan bg yang senada atau putih bersih 
-        dengan rounded corners yang besar jika memungkinkan.
+        Sidebar Anda tetap menggunakan bg-white bawaan komponen agar kontrasnya bagus.
       */}
       <Sidebar />
       
@@ -28,7 +26,8 @@ export default function MainLayout() {
           Dibuat sticky dengan background yang sama agar menyatu.
           Backdrop-blur memberikan efek kaca modern saat konten di-scroll di bawahnya.
         */}
-        <header className="sticky top-0 z-[40] bg-[#FDF8F4]/80 backdrop-blur-xl">
+        {/* 🟢 PERBAIKAN 2: Mengubah bg kaca pembungkus header menjadi #F8FAFC/80 */}
+        <header className="sticky top-0 z-[40] bg-[#F8FAFC]/80 backdrop-blur-xl">
           <Header />
         </header>
 
@@ -40,16 +39,17 @@ export default function MainLayout() {
           id="page-wrapper" 
           className="flex-1 overflow-y-auto pb-10"
         >
-          {/* Outlet merender Dashboard, Mechanics, dll */}
+          {/* Outlet merender Dashboard, Mechanics, Customers, dll */}
           <Outlet />
         </main>
         
         {/* Footer:
-          Disesuaikan dengan gaya Reztro yang minimalis.
+          Disesuaikan dengan gaya yang minimalis.
           Menggunakan font-black untuk uppercase agar terlihat seperti desain editorial.
         */}
         <footer className="px-10 py-6 text-center">
-          <div className="border-t border-orange-100/50 pt-6">
+          {/* 🟢 PERBAIKAN 3: Mengubah border pemisah footer menjadi abu-abu tipis (gray-100) agar serasi */}
+          <div className="border-t border-gray-200/60 pt-6">
             <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">
               BengkelGo Fleet Management System <span className="text-[#FF6B2C]/40">•</span> v2.0.4
             </p>

@@ -13,10 +13,16 @@ const Mechanics = React.lazy(() => import("./pages/Mechanics"));
 const CoverageArea = React.lazy(() => import("./pages/CoverageArea"));
 const ComponentsPage = React.lazy(() => import("./pages/Components"));
 
-// ========================================================
-// 🟢 1. LAZY IMPORT UNTUK HALAMAN MONITOR CRM BARU
-// ========================================================
+// 🟢 LAZY IMPORT HALAMAN MONITOR CRM BARU
 const MechanicCrmStatus = React.lazy(() => import("./components/MechanicCrmStatus"));
+const dataCust = React.lazy(() => import("./pages/dataCust"))
+// 🟢 LAZY IMPORT HALAMAN FITUR CRM PELANGGAN BARU
+const Promotions = React.lazy(() => import("./pages/Promotions"));
+const Reviews = React.lazy(() => import("./pages/Reviews"));
+const Messages = React.lazy(() => import("./pages/Messages"));
+
+// 🟢 LAZY IMPORT HALAMAN GUEST LANDING PAGE
+const GuestLanding = React.lazy(() => import("./pages/GuestLanding"));
 
 const Products = React.lazy(() => import("./pages/Products"));
 const ProductsDetail = React.lazy(() => import("./pages/ProductsDetail"));
@@ -64,31 +70,40 @@ function App() {
     <Suspense fallback={<Loading />}>
       <Routes>
         {/* ========================================================
-            🔑 AUTH LAYOUT (Login tampil pertama kali di path "/")
+            🌍 GUEST AREA (Halaman Pertama Kali yang Muncul di Path "/")
+           ======================================================== */}
+        <Route path="/" element={<GuestLanding />} />
+
+        {/* ========================================================
+            🔑 AUTH LAYOUT (Alur Pendaftaran & Masuk Akur)
            ======================================================== */}
         <Route element={<AuthLayout />}>
-          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot" element={<Forgot />} />
         </Route>
 
         {/* ========================================================
-            💻 MAIN LAYOUT (Dashboard dipindah ke path "/dashboard")
+            💻 MEMBER AREA / MAIN LAYOUT (Masuk setelah Login Sukses)
            ======================================================== */}
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/orders" element={<Orders />} />
-          <Route path="/customers" element={<Customers />} />
           <Route path="/mechanics" element={<Mechanics />} />
           <Route path="/locations" element={<CoverageArea />} />
           <Route path="/components" element={<ComponentsPage />} />
-          
-          {/* 🟢 ROUTE BARU: MENCOCOKKAN PATH DARI SIDEBAR */}
-          <Route path="/MechanicCrmStatus" element={<MechanicCrmStatus />} />
-          
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductsDetail />} />
+          
+          {/* ========================================================
+              🟢 MENU BARU: ROUTE CRM & PELANGGAN 
+             ======================================================== */}
+          <Route path="/customers" element={<Customers />} />
+              <Route path="/dataCust" element={<dataCust />} />
+          <Route path="/promotions" element={<Promotions />} />
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/MechanicCrmStatus" element={<MechanicCrmStatus />} />
           
           <Route path="/error/:errorCode" element={<ErrorRouteWrapper />} />
           <Route path="*" element={<ErrorPage {...errorData[404]} />} />
