@@ -1,0 +1,41 @@
+import axios from 'axios';
+
+// URL dan Anon Key Supabase Anda
+const BASE_URL = "https://ynukgcfeighswhrbqnca.supabase.co/rest/v1";
+const API_KEY = "sb_publishable_JcwKmrG4kCVzAAu8sroRQA_1Bsj5U6Z";
+
+const headers = {
+    "apikey": API_KEY,
+    "Authorization": `Bearer ${API_KEY}`,
+    "Content-Type": "application/json",
+    "Prefer": "return=representation" 
+};
+
+export const supabaseAPI = {
+    // 1. Proses Login (Membaca tabel 'users_bengkel')
+    async loginUser(email, password) {
+        // Menggunakan nama tabel: users_bengkel
+        const response = await axios.get(`${BASE_URL}/users_bengkel?email=eq.${encodeURIComponent(email)}`, { headers });
+        const users = response.data;
+        
+        // Validasi kecocokan password di sisi client aplikasi
+        if (users.length > 0 && users[0].password === password) {
+            return users; 
+        }
+        return []; 
+    },
+
+    // 2. Proses Register (Menyimpan data ke tabel 'users_bengkel')
+    async registerUser(userData) {
+        // Menggunakan nama tabel: users_bengkel
+        const response = await axios.post(`${BASE_URL}/users_bengkel`, userData, { headers });
+        return response.data;
+    },
+
+    // 3. Cek Duplikasi Email/Username saat Register
+    async checkEmailExists(email) {
+        // Menggunakan nama tabel: users_bengkel
+        const response = await axios.get(`${BASE_URL}/users_bengkel?email=eq.${encodeURIComponent(email)}`, { headers });
+        return response.data.length > 0;
+    }
+};

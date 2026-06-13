@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { Route, Routes, useParams } from "react-router-dom";
+import { Route, Routes, useParams, Navigate } from "react-router-dom";
 import "./assets/tailwind.css";
 import Loading from "./components/Loading";
 
@@ -63,17 +63,28 @@ function App() {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
+        {/* ========================================================
+            🔑 AUTH LAYOUT (Login tampil pertama kali di path "/")
+           ======================================================== */}
+        <Route element={<AuthLayout />}>
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot" element={<Forgot />} />
+        </Route>
+
+        {/* ========================================================
+            💻 MAIN LAYOUT (Dashboard dipindah ke path "/dashboard")
+           ======================================================== */}
         <Route element={<MainLayout />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/mechanics" element={<Mechanics />} />
           <Route path="/locations" element={<CoverageArea />} />
           <Route path="/components" element={<ComponentsPage />} />
           
-          {/* ========================================================
-              🟢 2. ROUTE BARU: MENCOCOKKAN PATH DARI SIDEBAR 
-             ======================================================== */}
+          {/* 🟢 ROUTE BARU: MENCOCOKKAN PATH DARI SIDEBAR */}
           <Route path="/MechanicCrmStatus" element={<MechanicCrmStatus />} />
           
           <Route path="/products" element={<Products />} />
@@ -81,12 +92,6 @@ function App() {
           
           <Route path="/error/:errorCode" element={<ErrorRouteWrapper />} />
           <Route path="*" element={<ErrorPage {...errorData[404]} />} />
-        </Route>
-
-        <Route element={<AuthLayout />}>
-          <Route element={<Login />} path="/login" />
-          <Route element={<Register />} path="/register" />
-          <Route element={<Forgot />} path="/forgot" />
         </Route>
       </Routes>
     </Suspense>
