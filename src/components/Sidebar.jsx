@@ -11,13 +11,14 @@ import {
   FaUserFriends,
   FaTags,
   FaStar,
-  FaCommentDots
+  FaCommentDots,
+  FaDatabase // 🟢 Import ikon database
 } from "react-icons/fa";
 import { MdSpaceDashboard } from "react-icons/md";
-import { NavLink, useNavigate } from "react-router-dom"; // 🟢 Import useNavigate
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
-  const navigate = useNavigate(); // 🟢 Inisialisasi hooks navigate
+  const navigate = useNavigate();
 
   const menuClass = ({ isActive }) =>
     `flex cursor-pointer items-center rounded-2xl p-4 mb-1 space-x-4 transition-all duration-300 group
@@ -26,22 +27,16 @@ export default function Sidebar() {
         "text-[#666666] hover:text-[#FF6B2C] hover:bg-[#FDF8F4]"
     }`;
 
-  // 🟢 Fungsi untuk menangani proses Logout
   const handleLogout = () => {
-    // 1. Bersihkan token dan data user dari penyimpanan browser
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-
-    // 2. Arahkan pengguna kembali ke halaman landing (root path)
     navigate("/");
   };
 
   return (
-    <div
-      id="sidebar"
-      className="sticky top-0 left-0 flex h-screen w-72 shrink-0 flex-col bg-white p-6 border-r border-gray-100"
-    >
-      {/* Header / Logo Section - BengkelGoFix (Tetap/Static di atas) */}
+    <div id="sidebar" className="sticky top-0 left-0 flex h-screen w-72 shrink-0 flex-col bg-white p-6 border-r border-gray-100">
+      
+      {/* Header / Logo */}
       <div id="sidebar-header" className="flex shrink-0 items-center space-x-3 mb-10 px-2">
         <div className="bg-[#FF6B2C] p-2.5 rounded-xl text-white shadow-lg shadow-orange-100">
           <FaWrench size={20} />
@@ -53,7 +48,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Main Menu Navigation (Area ini saja yang bisa di-scroll jika menu terlalu banyak) */}
+      {/* Main Menu Navigation */}
       <div id="sidebar-menu" className="flex-1 overflow-y-auto pr-2 -mr-2">
         <ul id="menu-list" className="space-y-1">
           <p className="px-4 text-[11px] font-bold text-gray-300 uppercase tracking-[0.2em] mb-4">
@@ -102,9 +97,7 @@ export default function Sidebar() {
             </NavLink>
           </li>
 
-          {/* ========================================================
-              CRM & PELANGGAN
-              ======================================================== */}
+          {/* CRM & PELANGGAN */}
           <div className="pt-6 my-2 border-t border-gray-100">
             <p className="px-4 text-[11px] font-bold text-gray-300 uppercase tracking-[0.2em] mb-3">
               CRM & Pelanggan
@@ -139,9 +132,7 @@ export default function Sidebar() {
             </NavLink>
           </li>
 
-          {/* ========================================================
-              MANAJEMEN SISTEM
-              ======================================================== */}
+          {/* MANAJEMEN SISTEM */}
           <div className="pt-6 my-2 border-t border-gray-100">
             <p className="px-4 text-[11px] font-bold text-gray-300 uppercase tracking-[0.2em] mb-3">
               Manajemen Sistem
@@ -154,15 +145,20 @@ export default function Sidebar() {
               <span className="text-sm">CRM Monitor</span>
             </NavLink>
           </li>
+
+          {/* 🟢 TOMBOL MENU BARU: SUPABASE MONITOR */}
+          <li>
+            <NavLink to="/database-monitor" className={menuClass}>
+              <FaDatabase className="text-xl" /> 
+              <span className="text-sm">Supabase Monitor</span>
+            </NavLink>
+          </li>
         </ul>
       </div>
 
-      {/* Footer & Bottom Profile Section (Tetap/Static di bawah) */}
+      {/* Footer Profile Section */}
       <div id="sidebar-footer" className="mt-auto shrink-0 pt-4 border-t border-gray-50">
-        <div
-          id="admin-card"
-          className="bg-[#FDF8F4] p-4 rounded-[24px] border border-orange-100/50 mb-4"
-        >
+        <div id="admin-card" className="bg-[#FDF8F4] p-4 rounded-[24px] border border-orange-100/50 mb-4">
           <div className="flex items-center space-x-3">
             <div className="relative">
               <img
@@ -182,7 +178,6 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* 🟢 Menambahkan event onClick ke fungsi handleLogout */}
         <button 
           onClick={handleLogout}
           className="w-full flex items-center justify-center space-x-2 py-2.5 text-gray-400 hover:text-red-500 font-bold text-xs transition-colors group"

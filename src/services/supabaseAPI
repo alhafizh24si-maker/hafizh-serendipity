@@ -1,6 +1,6 @@
 import axios from 'axios';
+import bcrypt from 'bcryptjs'; // 🟢 Import library bcryptjs
 
-// URL dan Anon Key Supabase Anda
 const BASE_URL = "https://ynukgcfeighswhrbqnca.supabase.co/rest/v1";
 const API_KEY = "sb_publishable_JcwKmrG4kCVzAAu8sroRQA_1Bsj5U6Z";
 
@@ -12,30 +12,60 @@ const headers = {
 };
 
 export const supabaseAPI = {
-    // 1. Proses Login (Membaca tabel 'users_bengkel')
+    // 1. Proses Login (Mencocokkan password terenkripsi)
     async loginUser(email, password) {
-        // Menggunakan nama tabel: users_bengkel
+        // Ambil data user berdasarkan email saja dari database
         const response = await axios.get(`${BASE_URL}/users_bengkel?email=eq.${encodeURIComponent(email)}`, { headers });
         const users = response.data;
         
-        // Validasi kecocokan password di sisi client aplikasi
-        if (users.length > 0 && users[0].password === password) {
-            return users; 
+        if (users.length > 0) {
+            const user = users[0];
+            
+            // 🟢 Komparasi password asli dari input dengan password hash dari database
+            const isPasswordMatch = await bcrypt.compare(password, user.password);
+            
+            if (isPasswordMatch) {
+                return users; // Kembalikan data jika cocok
+            }
         }
-        return []; 
+        return []; // Kembalikan array kosong jika tidak cocok
     },
 
-    // 2. Proses Register (Menyimpan data ke tabel 'users_bengkel')
+    // 2. Proses Register (Mengenkripsi password sebelum disimpan)
     async registerUser(userData) {
-        // Menggunakan nama tabel: users_bengkel
-        const response = await axios.post(`${BASE_URL}/users_bengkel`, userData, { headers });
-        return response.data;
+        try {
+            // 🟢 Generate 'salt' dan lakukan hashing pada password bawaan
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(userData.password, salt);
+            
+            // Bungkus ulang data dengan password yang sudah di-hash
+            const secureUserData = {
+                ...userData,
+                password: hashedPassword // Password sekarang berupa kode acak aman
+            };
+
+            const response = await axios.post(`${BASE_URL}/users_bengkel`, secureUserData, { headers });
+            return response.data;
+        } catch (error) {
+            console.error("Gagal melakukan enkripsi/registrasi:", error);
+            throw error;
+        }
     },
 
     // 3. Cek Duplikasi Email/Username saat Register
     async checkEmailExists(email) {
-        // Menggunakan nama tabel: users_bengkel
         const response = await axios.get(`${BASE_URL}/users_bengkel?email=eq.${encodeURIComponent(email)}`, { headers });
         return response.data.length > 0;
+    },
+
+    // 4. Mengambil SEMUA data user untuk halaman Database Monitor
+    async getAllUsers() {
+        try {
+            const response = await axios.get(`${BASE_URL}/users_bengkel`, { headers });
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching all users via Axios:", error);
+            return [];
+        }
     }
 };
