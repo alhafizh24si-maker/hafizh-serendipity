@@ -81,13 +81,13 @@ export default function CoverageArea() {
   };
 
   return (
-    <div className="bg-[#FDF8F4] min-h-screen relative">
+    <div className="bg-white min-h-screen relative">
       <PageHeader title="Area Jangkauan" breadcrumb={["System", "Coverage Area"]} />
       
       <div className="px-10 py-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Kolom Kiri: Daftar Wilayah */}
-        <div className="lg:col-span-5 bg-white p-8 rounded-[2.5rem] border border-orange-100/50 shadow-sm flex flex-col">
+        <div className="lg:col-span-5 bg-white p-8 rounded-[2.5rem] border border-gray-200 shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-8">
             <div>
               <h2 className="text-xl font-black text-gray-900 flex items-center gap-2 tracking-tight">
@@ -111,7 +111,7 @@ export default function CoverageArea() {
                 className={`p-5 rounded-[1.5rem] flex justify-between items-center group cursor-pointer transition-all border ${
                   mapCenter === a.coords 
                     ? "bg-orange-50/50 border-[#FF6B2C] shadow-lg shadow-orange-100/30" 
-                    : "bg-[#FDF8F4]/50 border-transparent hover:bg-white hover:shadow-xl hover:shadow-orange-100/50 hover:border-orange-100"
+                    : "bg-gray-50 border-transparent hover:bg-white hover:shadow-lg hover:shadow-gray-100 hover:border-[#FF6B2C]/30"
                 }`}
               >
                 <div className="flex items-center gap-5">
@@ -139,14 +139,14 @@ export default function CoverageArea() {
           {/* AKTIF: Tombol sekarang mengubah state isModalOpen menjadi true */}
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="mt-8 w-full py-5 border-2 border-dashed border-orange-100 rounded-[1.5rem] text-gray-400 font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:border-[#FF6B2C] hover:text-[#FF6B2C] hover:bg-orange-50/50 transition-all group"
+            className="mt-8 w-full py-5 border-2 border-dashed border-gray-200 rounded-[1.5rem] text-gray-400 font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:border-[#FF6B2C] hover:text-[#FF6B2C] hover:bg-orange-50/50 transition-all group"
           >
             <FaPlus size={10} className="group-hover:rotate-90 transition-transform" /> Tambah Wilayah Baru
           </button>
         </div>
         
         {/* Kolom Kanan: Google Maps Map Box */}
-        <div className="lg:col-span-7 bg-white rounded-[2.5rem] relative overflow-hidden shadow-2xl shadow-orange-100/50 min-h-[550px] border-[12px] border-white transition-all duration-500 group">
+        <div className="lg:col-span-7 bg-white rounded-[2.5rem] relative overflow-hidden shadow-2xl shadow-gray-100 min-h-[550px] border-[12px] border-white transition-all duration-500 group">
           <iframe
             ref={mapFrameRef}
             title="Google Maps Pekanbaru"
@@ -160,7 +160,7 @@ export default function CoverageArea() {
           ></iframe>
 
           {/* Floating Status Bar */}
-          <div className="absolute bottom-8 left-8 right-8 bg-white/90 backdrop-blur-xl p-6 rounded-[2rem] shadow-2xl border border-white/50 flex items-center justify-between transition-all duration-700 group-hover:bottom-10">
+          <div className="absolute bottom-8 left-8 right-8 bg-white/90 backdrop-blur-xl p-6 rounded-[2rem] shadow-2xl border border-gray-100/50 flex items-center justify-between transition-all duration-700 group-hover:bottom-10">
             <div className="flex items-center gap-4">
               <div className="w-3 h-3 bg-[#FF6B2C] rounded-full animate-pulse"></div>
               <div>
@@ -196,7 +196,7 @@ export default function CoverageArea() {
       {/* POP-UP MODAL FORM: Hanya muncul jika isModalOpen === true */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm flex items-center justify-center z-50 transition-all">
-          <div className="bg-white rounded-[2.5rem] border border-orange-100 p-8 max-w-md w-full mx-4 shadow-2xl animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-[2.5rem] border border-gray-200 p-8 max-w-md w-full mx-4 shadow-2xl animate-in fade-in zoom-in duration-200">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
                 <FaMapMarkerAlt className="text-[#FF6B2C]" /> Tambah Wilayah Operasional
@@ -219,7 +219,7 @@ export default function CoverageArea() {
                   placeholder="Contoh: Rumbai Pesisir"
                   value={newArea.city}
                   onChange={(e) => setNewArea({ ...newArea, city: e.target.value })}
-                  className="w-full border border-orange-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B2C] font-medium"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B2C] focus:ring-2 focus:ring-[#FF6B2C]/20 transition-all font-medium"
                 />
               </div>
 
@@ -231,7 +231,7 @@ export default function CoverageArea() {
                   placeholder="Contoh: Limbungan, Meranti Pandak"
                   value={newArea.zones}
                   onChange={(e) => setNewArea({ ...newArea, zones: e.target.value })}
-                  className="w-full border border-orange-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B2C] font-medium"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B2C] focus:ring-2 focus:ring-[#FF6B2C]/20 transition-all font-medium"
                 />
               </div>
 
@@ -242,7 +242,7 @@ export default function CoverageArea() {
                   placeholder="Contoh: 0.5634,101.4390"
                   value={newArea.coords}
                   onChange={(e) => setNewArea({ ...newArea, coords: e.target.value })}
-                  className="w-full border border-orange-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B2C] font-medium"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B2C] focus:ring-2 focus:ring-[#FF6B2C]/20 transition-all font-medium"
                 />
               </div>
 

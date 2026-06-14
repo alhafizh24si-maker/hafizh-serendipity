@@ -51,12 +51,12 @@ export default function Mechanics() {
   };
 
   return (
-    <div className="bg-[#FDF8F4] min-h-screen">
+    <div className="bg-white min-h-screen">
       <PageHeader title="Mekanik" breadcrumb={["Dashboard", "Mechanics"]} />
 
       {/* SEKSI FORM INPUT (CRM FITUR) */}
       <div className="px-10 py-6 max-w-4xl">
-        <form onSubmit={handleAddMechanic} className="bg-white p-6 rounded-2xl border border-orange-100 flex flex-wrap gap-4 items-end shadow-sm">
+        <form onSubmit={handleAddMechanic} className="bg-white p-6 rounded-2xl border border-gray-200 flex flex-wrap gap-4 items-end shadow-sm">
           <div className="flex flex-col gap-1 flex-1 min-w-[200px]">
             <label className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Nama Mekanik</label>
             <input 
@@ -65,7 +65,7 @@ export default function Mechanics() {
               placeholder="Contoh: Andi Wijaya"
               value={newMechanic.name}
               onChange={(e) => setNewMechanic({ ...newMechanic, name: e.target.value })}
-              className="border border-orange-100 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#FF6B2C]"
+              className="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#FF6B2C] focus:ring-2 focus:ring-[#FF6B2C]/20 transition-all"
             />
           </div>
           <div className="flex flex-col gap-1 flex-1 min-w-[200px]">
@@ -75,7 +75,7 @@ export default function Mechanics() {
               placeholder="Contoh: Overhaul Transmisi"
               value={newMechanic.skill}
               onChange={(e) => setNewMechanic({ ...newMechanic, skill: e.target.value })}
-              className="border border-orange-100 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#FF6B2C]"
+              className="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#FF6B2C] focus:ring-2 focus:ring-[#FF6B2C]/20 transition-all"
             />
           </div>
           <button type="submit" className="bg-[#FF6B2C] text-white px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-[#e85a1f] transition-all shadow-lg shadow-orange-200 active:scale-95 h-[40px]">
@@ -92,11 +92,11 @@ export default function Mechanics() {
           mechanics.map((m) => (
             <div 
               key={m.id} 
-              className="bg-white p-8 rounded-[2rem] border border-orange-100/50 hover:border-[#FF6B2C]/30 transition-all group relative overflow-hidden shadow-sm"
+              className="bg-white p-8 rounded-[2rem] border border-gray-200 hover:border-[#FF6B2C]/30 transition-all group relative overflow-hidden shadow-sm hover:shadow-md"
             >
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-[#FDF8F4] border-2 border-orange-50 rounded-2xl flex items-center justify-center text-[#FF6B2C] font-black text-2xl group-hover:bg-[#FF6B2C] group-hover:text-white transition-colors duration-500">
+                  <div className="w-16 h-16 bg-orange-50 border-2 border-orange-100 rounded-2xl flex items-center justify-center text-[#FF6B2C] font-black text-2xl group-hover:bg-[#FF6B2C] group-hover:text-white transition-colors duration-500">
                     {m.name.charAt(0)}
                   </div>
                   <div>
@@ -115,7 +115,7 @@ export default function Mechanics() {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center border-t border-orange-50 pt-5 mt-2">
+              <div className="flex justify-between items-center border-t border-gray-100 pt-5 mt-2">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-1 text-left">Rating</span>
                   <div className="flex items-center gap-1.5 text-gray-800 font-black">
@@ -133,7 +133,7 @@ export default function Mechanics() {
               </div>
 
               <div className="absolute bottom-4 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                 <FaChevronRight className="text-orange-100" />
+                 <FaChevronRight className="text-orange-200" />
               </div>
             </div>
           ))
