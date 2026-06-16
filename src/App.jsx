@@ -14,13 +14,14 @@ const CoverageArea = React.lazy(() => import("./pages/CoverageArea"));
 const ComponentsPage = React.lazy(() => import("./pages/Components"));
 
 const MechanicCrmStatus = React.lazy(() => import("./components/MechanicCrmStatus"));
-const dataCust = React.lazy(() => import("./pages/dataCust"))
+const dataCust = React.lazy(() => import("./pages/dataCust"));
 const Promotions = React.lazy(() => import("./pages/Promotions"));
 const Reviews = React.lazy(() => import("./pages/Reviews"));
 const Messages = React.lazy(() => import("./pages/Messages"));
 
-// 🟢 LAZY IMPORT HALAMAN MONITOR DATABASE BARU
-const DatabaseMonitor = React.lazy(() => import("./pages/DatabaseMonitor")); // Sesuaikan path foldermu
+// 🟢 LAZY IMPORT HALAMAN MEMBER & DATABASE MONITOR BARU
+const Member = React.lazy(() => import("./pages/Member")); // Jalur file Member.jsx Anda
+const DatabaseMonitor = React.lazy(() => import("./pages/DatabaseMonitor"));
 
 const GuestLanding = React.lazy(() => import("./pages/GuestLanding"));
 const Products = React.lazy(() => import("./pages/Products"));
@@ -48,14 +49,20 @@ function App() {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
+        {/* Halaman Landing Awal */}
         <Route path="/" element={<GuestLanding />} />
 
+        {/* Halaman Autentikasi Mandiri */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot" element={<Forgot />} />
         </Route>
 
+        {/* 🟢 HALAMAN MEMBER MANDIRI (Diletakkan di luar MainLayout) */}
+        <Route path="/member" element={<Member />} />
+
+        {/* Kelompok Halaman Utama Manajemen CRM Dashboard Bengkel */}
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/orders" element={<Orders />} />
@@ -72,7 +79,6 @@ function App() {
           <Route path="/messages" element={<Messages />} />
           <Route path="/MechanicCrmStatus" element={<MechanicCrmStatus />} />
           
-          {/* 🟢 ROUTE BARU UNTUK MEMBUKA HALAMAN DATABASE MONITOR */}
           <Route path="/database-monitor" element={<DatabaseMonitor />} />
           
           <Route path="/error/:errorCode" element={<ErrorRouteWrapper />} />
@@ -82,5 +88,4 @@ function App() {
     </Suspense>
   );
 }
-
 export default App;

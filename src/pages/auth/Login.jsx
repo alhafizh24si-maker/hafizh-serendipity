@@ -30,10 +30,25 @@ export default function Login() {
             if (userRecords && userRecords.length > 0) {
                 const userData = userRecords[0];
 
-                localStorage.setItem("token", "supabase-session-active-token");
-                localStorage.setItem("user", JSON.stringify({ email: userData.email, id: userData.id }));
+                // 🟢 Menentukan role: ambil dari database, atau deteksi lewat email jika tidak ada kolom role
+                const userRole = userData.role || (userData.email?.includes("admin") ? "admin" : "user");
 
-                navigate("/dashboard");
+                // Menyimpan token dan data user ke localStorage agar bisa diakses oleh halaman lain
+                localStorage.setItem("token", "supabase-session-active-token");
+                localStorage.setItem("user", JSON.stringify({ 
+                    id: userData.id,
+                    email: userData.email, 
+                    name: userData.name || "User Member",
+                    role: userRole 
+                }));
+
+                // 🟢 Pengondisian navigasi berdasarkan role
+                if (userRole === "admin") {
+                    navigate("/dashboard");
+                } else {
+                    navigate("/member");
+                }
+
             } else {
                 setError("Email/Username atau Password salah. Periksa kembali data Anda.");
             }
@@ -149,7 +164,7 @@ export default function Login() {
                                 required
                             />
                             
-                            {/* 🔑 LINK FORGOT PASSWORD (BARUDitambahkan) */}
+                            {/* 🔑 LINK FORGOT PASSWORD */}
                             <div className="flex justify-end pt-1">
                                 <button
                                     type="button"
