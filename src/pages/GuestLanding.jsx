@@ -6,7 +6,7 @@ import {
     FaCheckCircle, FaMapMarkerAlt, FaGift, FaRocket, 
     FaShieldAlt, FaUsers, FaClock, FaTags, FaBox, 
     FaPhoneAlt, FaHome, FaUserCheck, FaWallet, FaQuoteLeft,
-    FaEye, FaArrowUp, FaChevronDown, FaChevronUp, FaSun, FaMoon, FaCircle
+    FaEye, FaArrowUp, FaChevronDown, FaChevronUp, FaSun, FaMoon, FaCircle, FaBell, FaTimes
 } from "react-icons/fa";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "../components/ui/sheet";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "../components/ui/collapsible";
@@ -15,6 +15,9 @@ import { Switch } from "../components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Checkbox } from "../components/ui/checkbox";
 import { Label } from "../components/ui/label";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction, AlertDialogTrigger } from "../components/ui/alert-dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 
 export default function GuestLanding() {
     const navigate = useNavigate();
@@ -36,6 +39,20 @@ export default function GuestLanding() {
     const [selectedMotor, setSelectedMotor] = useState("");
     const [selectedService, setSelectedService] = useState("");
     const [selectedParts, setSelectedParts] = useState([]);
+
+    // CRM & Analytics States
+    const [sessionId] = useState(() => Math.random().toString(36).substring(2, 15));
+    const [showBanner, setShowBanner] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    
+    // Lead Capture States
+    const [leadModalOpen, setLeadModalOpen] = useState(false);
+    const [leadStep, setLeadStep] = useState(1);
+    const [leadData, setLeadData] = useState({ nama: '', wa: '', email: '', tujuan: 'Servis Motor Saya', setuju: false, source: '' });
+    
+    // CRM Dashboard
+    const [dashboardOpen, setDashboardOpen] = useState(false);
+    const [leadsList, setLeadsList] = useState([]);
 
     const heroRef = useRef(null);
     const vouchersRef = useRef(null);
@@ -61,6 +78,46 @@ export default function GuestLanding() {
         return total;
     };
     const estimatedTime = selectedService === "Tune Up Mesin" ? "60-90 Menit" : selectedService === "Servis Rutin" ? "45-60 Menit" : "15-30 Menit";
+
+    const trackEvent = (eventType, payload) => {
+        const events = JSON.parse(localStorage.getItem('bengkelgofix-analytics') || '[]');
+        events.push({ eventType, payload, timestamp: new Date().toISOString(), sessionId });
+        localStorage.setItem('bengkelgofix-analytics', JSON.stringify(events));
+    };
+
+    const addNotification = (notif) => {
+        setNotifications(prev => [{ ...notif, timestamp: new Date() }, ...prev].slice(0, 5));
+    };
+
+    const handleCtaClick = (source) => {
+        trackEvent('cta_click', { source });
+        setLeadData({ nama: '', wa: '', email: '', tujuan: 'Servis Motor Saya', setuju: false, source });
+        setLeadStep(1);
+        setLeadModalOpen(true);
+    };
+
+    const submitLead = () => {
+        const currentLeads = JSON.parse(localStorage.getItem('bengkelgofix-leads') || '[]');
+        const newLead = { ...leadData, id: Date.now(), timestamp: new Date().toISOString() };
+        localStorage.setItem('bengkelgofix-leads', JSON.stringify([newLead, ...currentLeads]));
+        toast.success("Data berhasil tersimpan! Mengalihkan...", { style: { background: '#10b981', color: 'white', border: 'none' } });
+        setTimeout(() => {
+            setLeadModalOpen(false);
+            navigate(leadData.source === 'cta-mitra' ? "/register" : "/login");
+        }, 2000);
+    };
+
+    const exportCsv = () => {
+        const leads = JSON.parse(localStorage.getItem('bengkelgofix-leads') || '[]');
+        const csvRows = ["ID,Nama,WhatsApp,Email,Tujuan,Source,Timestamp"];
+        leads.forEach(l => csvRows.push(`${l.id},"${l.nama}","${l.wa}","${l.email}","${l.tujuan}","${l.source}","${l.timestamp}"`));
+        const blob = new Blob([csvRows.join("\\n")], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `bengkelgofix-leads-${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+    };
 
     const vouchers = [
         { id: "FIXNEW20", title: "Diskon Member Baru", desc: "Potongan Rp 20.000 untuk servis pertama + Gratis Cuci Motor", value: "20K", icon: <FaGift /> },
@@ -90,7 +147,10 @@ export default function GuestLanding() {
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) setVisibleSections(prev => new Set(prev).add(entry.target.id));
+                if (entry.isIntersecting) {
+                    setVisibleSections(prev => new Set(prev).add(entry.target.id));
+                    trackEvent('section_view', { sectionId: entry.target.id, action: 'enter' });
+                }
             });
         }, { threshold: 0.1 });
 
@@ -102,7 +162,18 @@ export default function GuestLanding() {
     }, []);
 
     useEffect(() => {
-        const handleScroll = () => setIsScrolled(window.pageYOffset > 50);
+        const handleScroll = () => {
+            setIsScrolled(window.pageYOffset > 50);
+            
+            // Scroll Depth Tracking
+            const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            [25, 50, 75, 100].forEach(depth => {
+                if (scrollPercent >= depth && !window[`tracked_depth_${depth}`]) {
+                    window[`tracked_depth_${depth}`] = true;
+                    trackEvent('scroll_depth', { depth });
+                }
+            });
+        };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
@@ -110,6 +181,59 @@ export default function GuestLanding() {
     useEffect(() => {
         localStorage.setItem('bengkelgofix-theme', isDarkMode ? 'dark' : 'light');
     }, [isDarkMode]);
+
+    useEffect(() => {
+        // Banner & Dashboard
+        if (!localStorage.getItem('bengkelgofix-banner-dismissed')) setShowBanner(true);
+        
+        const handleKeyDown = (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                e.preventDefault();
+                setLeadsList(JSON.parse(localStorage.getItem('bengkelgofix-leads') || '[]'));
+                setDashboardOpen(true);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+
+        // Auto Toasts
+        const t1 = setTimeout(() => {
+            if (!claimedVouchers.includes("FIXNEW20") && !window.t1Fired) {
+                window.t1Fired = true;
+                toast("🎁 Voucher FIXNEW20 hampir habis! Klaim sekarang.", { style: { background: '#f97316', color: 'white', border: 'none' } });
+                addNotification({ type: 'promo', message: "Voucher FIXNEW20 hampir habis!" });
+            }
+        }, 3000);
+
+        const t2 = setTimeout(() => {
+            if (!window.t2Fired) {
+                window.t2Fired = true;
+                toast("⚡ Response time rata-rata hari ini: 28 menit", { style: { background: '#3b82f6', color: 'white', border: 'none' } });
+                addNotification({ type: 'info', message: "Response time rata-rata hari ini: 28 menit" });
+            }
+        }, 6000);
+
+        let count = 0;
+        let viewersInterval;
+        const triggerViewers = () => {
+            if (count >= 3) return;
+            const delay = Math.floor(Math.random() * 30000) + 30000;
+            viewersInterval = setTimeout(() => {
+                const num = Math.floor(Math.random() * 20) + 5;
+                toast(`🔥 ${num} orang sedang melihat produk ini sekarang`, { style: { background: '#f59e0b', color: 'white', border: 'none' } });
+                addNotification({ type: 'warning', message: `${num} orang sedang melihat produk` });
+                count++;
+                triggerViewers();
+            }, delay);
+        };
+        triggerViewers();
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            clearTimeout(t1);
+            clearTimeout(t2);
+            clearTimeout(viewersInterval);
+        };
+    }, [claimedVouchers]);
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -138,7 +262,10 @@ export default function GuestLanding() {
     const scrollTo = (ref) => ref.current?.scrollIntoView({ behavior: "smooth" });
     
     const handleClaim = (code) => {
-        if (!claimedVouchers.includes(code)) setClaimedVouchers([...claimedVouchers, code]);
+        if (!claimedVouchers.includes(code)) {
+            setClaimedVouchers([...claimedVouchers, code]);
+            trackEvent('voucher_interaction', { voucherId: code, action: 'claim' });
+        }
     };
 
     return (
@@ -161,8 +288,16 @@ export default function GuestLanding() {
                 .glow-text { text-shadow: 0 0 40px rgba(249, 115, 22, 0.5); }
             `}</style>
 
+            {showBanner && (
+                <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-r from-orange-600 to-orange-500 text-white flex items-center justify-center text-sm z-[60] px-4 font-medium shadow-md">
+                    <span>🎉 Promo Spesial Weekend: Diskon 25% untuk semua servis! Berlaku hingga Minggu malam.</span>
+                    <button onClick={() => { setShowBanner(false); localStorage.setItem('bengkelgofix-banner-dismissed', '1'); }} className="absolute right-4 font-bold hover:text-orange-200 transition-colors">
+                        <FaTimes />
+                    </button>
+                </div>
+            )}
             {/* NAVBAR */}
-            <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'py-3' : 'py-5'}`}>
+            <nav className={`fixed left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'py-3' : 'py-5'} ${showBanner ? 'top-10' : 'top-0'}`}>
                 <div className={`max-w-7xl mx-auto px-6 transition-all duration-500 ${isScrolled ? 'glass-light rounded-full mx-4 md:mx-auto shadow-xl' : ''}`}>
                     <div className="flex items-center justify-between py-2">
                         <div className="flex items-center gap-2 cursor-pointer group" onClick={() => scrollTo(heroRef)}>
@@ -183,12 +318,34 @@ export default function GuestLanding() {
                         </div>
 
                         <div className="flex items-center gap-4">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button className="relative p-2 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-orange-500">
+                                        <FaBell />
+                                        {notifications.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>}
+                                        {notifications.length > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>}
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className={`w-64 ${isDarkMode ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white text-gray-900'}`} align="end">
+                                    <DropdownMenuLabel>Notifikasi</DropdownMenuLabel>
+                                    <DropdownMenuSeparator className={isDarkMode ? "bg-slate-800" : ""} />
+                                    {notifications.length > 0 ? notifications.map((n, i) => (
+                                        <DropdownMenuItem key={i} className="flex flex-col items-start gap-1 p-3 cursor-default">
+                                            <span className="text-sm">{n.message}</span>
+                                            <span className="text-[10px] text-gray-500">{n.timestamp.toLocaleTimeString()}</span>
+                                        </DropdownMenuItem>
+                                    )) : (
+                                        <DropdownMenuItem className="p-3 text-gray-500 cursor-default">Belum ada notifikasi</DropdownMenuItem>
+                                    )}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+
                             <div className="flex items-center gap-2">
                                 <FaSun className={isDarkMode ? "text-gray-500" : "text-orange-500"} />
                                 <Switch checked={isDarkMode} onCheckedChange={setIsDarkMode} />
                                 <FaMoon className={isDarkMode ? "text-orange-400" : "text-gray-400"} />
                             </div>
-                            <button onClick={() => navigate("/login")} className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:scale-105 shadow-lg shadow-orange-500/30">
+                            <button onClick={() => handleCtaClick("navbar-login")} className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:scale-105 shadow-lg shadow-orange-500/30">
                                 Masuk / Daftar
                             </button>
                         </div>
@@ -404,7 +561,7 @@ export default function GuestLanding() {
                                 <FaClock className="text-orange-500" /> Estimasi Waktu: <span className="font-bold">{estimatedTime}</span>
                             </div>
 
-                            <button onClick={() => navigate("/register")} disabled={!selectedService} className={`w-full py-4 rounded-xl font-bold transition-all shadow-lg ${selectedService ? 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105' : 'bg-gray-500/50 text-gray-300 cursor-not-allowed'}`}>
+                            <button onClick={() => { trackEvent('calculator_use', { service: selectedService, total: calculateTotal() }); handleCtaClick('calculator-booking'); }} disabled={!selectedService} className={`w-full py-4 rounded-xl font-bold transition-all shadow-lg ${selectedService ? 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105' : 'bg-gray-500/50 text-gray-300 cursor-not-allowed'}`}>
                                 Booking Sekarang
                             </button>
                             <p className="text-center text-xs mt-4 text-gray-500">Harga final akan disesuaikan setelah inspeksi mekanik di bengkel.</p>
@@ -421,14 +578,17 @@ export default function GuestLanding() {
                             <span className="text-orange-500 font-bold text-sm uppercase tracking-widest">Marketplace</span>
                             <h2 className="text-4xl md:text-5xl font-extrabold mt-3 text-gray-900">Spare Part Terlaris</h2>
                         </div>
-                        <button onClick={() => navigate("/login")} className="text-orange-500 hover:text-orange-600 font-semibold flex items-center gap-2 group">
+                        <button onClick={() => handleCtaClick('marketplace-seeall')} className="text-orange-500 hover:text-orange-600 font-semibold flex items-center gap-2 group">
                             Lihat Semua <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
                         </button>
                     </div>
 
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
                         {popularProducts.map((p, idx) => (
-                            <Sheet key={p.id} open={openSheetId === p.id} onOpenChange={(isOpen) => setOpenSheetId(isOpen ? p.id : null)}>
+                            <Sheet key={p.id} open={openSheetId === p.id} onOpenChange={(isOpen) => {
+                                setOpenSheetId(isOpen ? p.id : null);
+                                if (isOpen) trackEvent('product_view', { productId: p.id, productName: p.name });
+                            }}>
                                 <div className={`bg-gray-50 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group ${visibleSections.has('products') ? 'animate-fade-up' : 'opacity-0'}`} style={{ animationDelay: `${idx * 0.15}s` }}>
                                     <div className="relative h-56 overflow-hidden bg-gray-100">
                                         <img src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -480,8 +640,8 @@ export default function GuestLanding() {
                                     <button 
                                         onClick={() => {
                                             setOpenSheetId(null);
-                                            toast.success("Produk berhasil ditambahkan ke keranjang!");
-                                            setTimeout(() => navigate("/login"), 1500);
+                                            toast.success("Produk berhasil ditambahkan ke keranjang!", { style: { background: '#10b981', color: 'white', border: 'none' } });
+                                            setTimeout(() => handleCtaClick('quickview-addtocart'), 1500);
                                         }}
                                         className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95"
                                     >
@@ -568,12 +728,12 @@ export default function GuestLanding() {
                         <h2 className="text-4xl md:text-5xl font-extrabold mb-6">Siap Bergabung dengan Kami?</h2>
                         <p className="text-gray-400 max-w-xl mx-auto mb-10 text-lg">Tingkatkan omzet bengkel Anda hingga 3x lipat dengan platform terintegrasi kami.</p>
                         <div className="flex gap-4 justify-center flex-wrap">
-                            <button onClick={() => navigate("/register")} className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-full transition-all shadow-xl shadow-orange-500/30 hover:scale-105 active:scale-95 text-lg">
+                            <button onClick={() => { trackEvent('cta_click', { button: 'mitra' }); handleCtaClick('cta-mitra'); }} className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-full transition-all shadow-xl shadow-orange-500/30 hover:scale-105 active:scale-95 text-lg">
                                 Gabung Mitra Sekarang
                             </button>
-                            <a href="https://wa.me/6281234567890" className="glass hover:bg-white/10 text-white font-bold px-8 py-4 rounded-full transition-all hover:scale-105 text-lg">
+                            <button onClick={() => { trackEvent('cta_click', { button: 'consultation' }); handleCtaClick('cta-consultation'); }} className="glass hover:bg-white/10 text-white font-bold px-8 py-4 rounded-full transition-all shadow-xl hover:scale-105 active:scale-95 text-lg">
                                 Konsultasi Gratis
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -632,7 +792,163 @@ export default function GuestLanding() {
                 </button>
             </div>
 
-            <Toaster position="top-center" richColors theme="dark" />
+            <Toaster position="top-center" richColors theme={isDarkMode ? "dark" : "light"} />
+
+            {/* LEAD CAPTURE MODAL */}
+            <AlertDialog open={leadModalOpen} onOpenChange={setLeadModalOpen}>
+                <AlertDialogContent className={`sm:max-w-md ${isDarkMode ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white text-gray-900'}`}>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Hampir Selesai! Lengkapi Data Anda</AlertDialogTitle>
+                        <AlertDialogDescription className={isDarkMode ? "text-gray-400" : "text-gray-600"}>
+                            Langkah {leadStep} dari 3
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    
+                    <div className="flex gap-2 justify-center mb-6">
+                        {[1, 2, 3].map(step => (
+                            <div key={step} className={`h-2 flex-1 rounded-full ${leadStep === step ? 'bg-orange-500' : (leadStep > step ? 'bg-emerald-500' : (isDarkMode ? 'bg-slate-800' : 'bg-gray-200'))}`} />
+                        ))}
+                    </div>
+
+                    <div className="py-4">
+                        {leadStep === 1 && (
+                            <div className="space-y-4">
+                                <div>
+                                    <Label className={isDarkMode ? "text-gray-300" : "text-gray-700"}>Nama Lengkap *</Label>
+                                    <input type="text" value={leadData.nama} onChange={e => setLeadData({...leadData, nama: e.target.value})} className={`w-full p-2 mt-1 border rounded-lg outline-none focus:border-orange-500 ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-gray-50 border-gray-300'}`} placeholder="Budi Santoso" />
+                                </div>
+                                <div>
+                                    <Label className={isDarkMode ? "text-gray-300" : "text-gray-700"}>WhatsApp *</Label>
+                                    <input type="tel" value={leadData.wa} onChange={e => setLeadData({...leadData, wa: e.target.value})} className={`w-full p-2 mt-1 border rounded-lg outline-none focus:border-orange-500 ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-gray-50 border-gray-300'}`} placeholder="081234567890" />
+                                </div>
+                                <div>
+                                    <Label className={isDarkMode ? "text-gray-300" : "text-gray-700"}>Email (Opsional)</Label>
+                                    <input type="email" value={leadData.email} onChange={e => setLeadData({...leadData, email: e.target.value})} className={`w-full p-2 mt-1 border rounded-lg outline-none focus:border-orange-500 ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-gray-50 border-gray-300'}`} placeholder="budi@example.com" />
+                                </div>
+                            </div>
+                        )}
+                        {leadStep === 2 && (
+                            <div className="space-y-3">
+                                <Label className={isDarkMode ? "text-gray-300" : "text-gray-700"}>Apa keperluan Anda?</Label>
+                                {["Servis Motor Saya", "Buka Bengkel Mitra", "Beli Spare Part", "Lainnya"].map(t => (
+                                    <div key={t} onClick={() => setLeadData({...leadData, tujuan: t})} className={`p-4 border rounded-xl cursor-pointer transition-colors ${leadData.tujuan === t ? 'border-orange-500 bg-orange-500/10' : (isDarkMode ? 'border-slate-700 hover:border-slate-500' : 'border-gray-200 hover:border-gray-300')}`}>
+                                        <div className="font-medium">{t}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        {leadStep === 3 && (
+                            <div className="space-y-4">
+                                <div className={`p-4 rounded-xl text-sm ${isDarkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
+                                    <p><strong>Nama:</strong> {leadData.nama}</p>
+                                    <p><strong>WA:</strong> {leadData.wa}</p>
+                                    <p><strong>Keperluan:</strong> {leadData.tujuan}</p>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                    <Checkbox id="setuju" checked={leadData.setuju} onCheckedChange={c => setLeadData({...leadData, setuju: c})} />
+                                    <Label htmlFor="setuju" className="text-sm leading-tight cursor-pointer">Saya setuju untuk dihubungi via WhatsApp terkait keperluan ini.</Label>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    
+                    <AlertDialogFooter className="sm:justify-between flex-row items-center gap-2">
+                        <button onClick={() => { if (leadStep > 1) setLeadStep(s => s - 1); else setLeadModalOpen(false); }} className={`px-4 py-2 text-sm ${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+                            {leadStep > 1 ? 'Kembali' : 'Batal'}
+                        </button>
+                        <button 
+                            onClick={() => {
+                                if (leadStep === 1) {
+                                    if (!leadData.nama || !/^(08|\+62)\d{8,13}$/.test(leadData.wa)) {
+                                        toast.error("Nama dan WA valid (08/ +62) wajib diisi!");
+                                        return;
+                                    }
+                                    setLeadStep(2);
+                                } else if (leadStep === 2) {
+                                    setLeadStep(3);
+                                } else {
+                                    if (!leadData.setuju) return toast.error("Anda harus menyetujui syarat & ketentuan.");
+                                    submitLead();
+                                }
+                            }} 
+                            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg transition-all active:scale-95"
+                        >
+                            {leadStep === 3 ? 'Kirim & Lanjutkan' : 'Lanjut'}
+                        </button>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* CRM ADMIN DASHBOARD */}
+            <Sheet open={dashboardOpen} onOpenChange={setDashboardOpen}>
+                <SheetContent side="left" className={`w-[400px] sm:w-[540px] border-r-orange-500/30 p-0 flex flex-col ${isDarkMode ? 'bg-slate-900 text-white' : 'bg-white text-gray-900'}`}>
+                    <div className="p-6 border-b border-white/10 flex justify-between items-center bg-slate-950 text-white">
+                        <h2 className="text-xl font-bold">CRM Analytics Preview</h2>
+                    </div>
+                    <div className="p-6 flex-1 overflow-y-auto space-y-6">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="glass-card p-4 rounded-xl bg-slate-800 text-white">
+                                <div className="text-sm text-gray-400">Total Leads</div>
+                                <div className="text-3xl font-bold text-orange-500">{leadsList.length}</div>
+                            </div>
+                            <div className="glass-card p-4 rounded-xl bg-slate-800 text-white">
+                                <div className="text-sm text-gray-400">Vouchers Claimed</div>
+                                <div className="text-3xl font-bold text-emerald-500">{JSON.parse(localStorage.getItem('bengkelgofix-analytics') || '[]').filter(e => e.eventType === 'voucher_interaction').length}</div>
+                            </div>
+                            <div className="glass-card p-4 rounded-xl bg-slate-800 text-white">
+                                <div className="text-sm text-gray-400">Product Views</div>
+                                <div className="text-3xl font-bold text-blue-500">{JSON.parse(localStorage.getItem('bengkelgofix-analytics') || '[]').filter(e => e.eventType === 'product_view').length}</div>
+                            </div>
+                            <div className="glass-card p-4 rounded-xl bg-slate-800 text-white">
+                                <div className="text-sm text-gray-400">Calculator Uses</div>
+                                <div className="text-3xl font-bold text-amber-500">{JSON.parse(localStorage.getItem('bengkelgofix-analytics') || '[]').filter(e => e.eventType === 'calculator_use').length}</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 className="font-bold mb-3">10 Leads Terbaru</h3>
+                            <div className="rounded-xl border border-white/10 overflow-hidden">
+                                <Table>
+                                    <TableHeader className="bg-slate-800">
+                                        <TableRow className="hover:bg-slate-800 border-white/10">
+                                            <TableHead className="text-white">Nama</TableHead>
+                                            <TableHead className="text-white">WA</TableHead>
+                                            <TableHead className="text-white">Tujuan</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {leadsList.slice(0,10).map((l, i) => (
+                                            <TableRow key={i} className="hover:bg-slate-800/50 border-white/10">
+                                                <TableCell className="font-medium text-slate-300">{l.nama}</TableCell>
+                                                <TableCell className="text-slate-400">{l.wa}</TableCell>
+                                                <TableCell className="text-slate-400">{l.tujuan}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="p-6 border-t border-white/10 bg-slate-950 flex gap-3">
+                        <button onClick={exportCsv} className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-medium transition-colors">Export CSV</button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <button className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition-colors">Reset Data</button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="bg-slate-900 border-slate-800 text-white">
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Hapus semua data CRM?</AlertDialogTitle>
+                                    <AlertDialogDescription className="text-gray-400">Tindakan ini tidak dapat dibatalkan. Semua leads dan analytics akan dihapus dari localStorage.</AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel className="bg-slate-800 border-slate-700 text-white hover:bg-slate-700">Batal</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => { localStorage.removeItem('bengkelgofix-leads'); localStorage.removeItem('bengkelgofix-analytics'); setLeadsList([]); toast.success('Data di-reset'); }} className="bg-red-600 hover:bg-red-700 text-white border-red-600">Ya, Hapus</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
+                </SheetContent>
+            </Sheet>
         </div>
     );
 }
