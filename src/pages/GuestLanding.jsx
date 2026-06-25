@@ -5,8 +5,12 @@ import {
     FaWrench, FaSearch, FaStar, FaArrowRight, 
     FaCheckCircle, FaMapMarkerAlt, FaGift, FaRocket, 
     FaShieldAlt, FaUsers, FaClock, FaTags, FaBox, 
-    FaPhoneAlt, FaHome, FaUserCheck, FaWallet, FaQuoteLeft
+    FaPhoneAlt, FaHome, FaUserCheck, FaWallet, FaQuoteLeft,
+    FaEye, FaArrowUp, FaChevronDown, FaChevronUp
 } from "react-icons/fa";
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "../components/ui/sheet";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "../components/ui/collapsible";
+import { Toaster, toast } from "sonner";
 
 export default function GuestLanding() {
     const navigate = useNavigate();
@@ -16,6 +20,9 @@ export default function GuestLanding() {
     const [activeTestimonial, setActiveTestimonial] = useState(0);
     const [animatedStats, setAnimatedStats] = useState({ mitra: 0, mekanik: 0, waktu: 0 });
     const [visibleSections, setVisibleSections] = useState(new Set());
+    const [openSheetId, setOpenSheetId] = useState(null);
+    const [openCollapsibleId, setOpenCollapsibleId] = useState(null);
+    const [isFabHovered, setIsFabHovered] = useState(false);
 
     const heroRef = useRef(null);
     const vouchersRef = useRef(null);
@@ -253,23 +260,67 @@ export default function GuestLanding() {
 
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
                         {popularProducts.map((p, idx) => (
-                            <div key={p.id} className={`bg-gray-50 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group ${visibleSections.has('products') ? 'animate-fade-up' : 'opacity-0'}`} style={{ animationDelay: `${idx * 0.15}s` }}>
-                                <div className="relative h-56 overflow-hidden bg-gray-100">
-                                    <img src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                                    <span className="absolute top-4 right-4 bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">-{p.discount}%</span>
-                                </div>
-                                <div className="p-6">
-                                    <h3 className="font-semibold text-gray-800 mb-3 line-clamp-2 h-12">{p.name}</h3>
-                                    <div className="flex items-center gap-1 mb-4">
-                                        {[...Array(5)].map((_, i) => <FaStar key={i} className={`text-sm ${i < Math.floor(p.rating) ? "text-amber-400" : "text-gray-200"}`} />)}
-                                        <span className="text-xs text-gray-400 ml-1">({p.rating})</span>
+                            <Sheet key={p.id} open={openSheetId === p.id} onOpenChange={(isOpen) => setOpenSheetId(isOpen ? p.id : null)}>
+                                <div className={`bg-gray-50 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group ${visibleSections.has('products') ? 'animate-fade-up' : 'opacity-0'}`} style={{ animationDelay: `${idx * 0.15}s` }}>
+                                    <div className="relative h-56 overflow-hidden bg-gray-100">
+                                        <img src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                        <span className="absolute top-4 right-4 bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg z-10">-{p.discount}%</span>
+                                        <SheetTrigger asChild>
+                                            <button className="absolute top-4 left-4 bg-white/80 hover:bg-white text-slate-900 p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                                <FaEye />
+                                            </button>
+                                        </SheetTrigger>
                                     </div>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-xl font-extrabold text-orange-500">{p.price}</span>
-                                        <span className="text-sm text-gray-400 line-through">{p.originalPrice}</span>
+                                    <div className="p-6">
+                                        <h3 className="font-semibold text-gray-800 mb-3 line-clamp-2 h-12">{p.name}</h3>
+                                        <div className="flex items-center gap-1 mb-4">
+                                            {[...Array(5)].map((_, i) => <FaStar key={i} className={`text-sm ${i < Math.floor(p.rating) ? "text-amber-400" : "text-gray-200"}`} />)}
+                                            <span className="text-xs text-gray-400 ml-1">({p.rating})</span>
+                                        </div>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-xl font-extrabold text-orange-500">{p.price}</span>
+                                            <span className="text-sm text-gray-400 line-through">{p.originalPrice}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                                <SheetContent className="bg-slate-950 text-white border-l border-white/10 overflow-y-auto w-full sm:max-w-md">
+                                    <SheetHeader className="text-left mb-6">
+                                        <SheetTitle className="text-white text-2xl font-bold">{p.name}</SheetTitle>
+                                        <SheetDescription className="text-gray-400">Quick View Produk</SheetDescription>
+                                    </SheetHeader>
+                                    <div className="mb-6 rounded-2xl overflow-hidden relative">
+                                        <img src={p.img} alt={p.name} className="w-full h-64 object-cover" />
+                                        <span className="absolute top-3 right-3 bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">Stok Tersedia</span>
+                                    </div>
+                                    <div className="flex items-baseline gap-3 mb-4">
+                                        <span className="text-3xl font-extrabold text-orange-500">{p.price}</span>
+                                        <span className="text-lg text-gray-500 line-through">{p.originalPrice}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 mb-6 text-sm text-gray-400">
+                                        <div className="flex items-center gap-1 text-amber-400">
+                                            <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
+                                        </div>
+                                        <span>{p.rating} / 5</span>
+                                        <span>•</span>
+                                        <span>Terjual {p.sales}</span>
+                                    </div>
+                                    <div className="space-y-4 text-gray-300 text-sm leading-relaxed mb-8">
+                                        <p>Produk ini merupakan salah satu dari spare part premium terbaik yang kami tawarkan. Dirancang dengan teknologi mutakhir untuk memastikan performa kendaraan Anda tetap optimal di berbagai kondisi jalan.</p>
+                                        <p>Kami menjamin keaslian 100% dan memberikan masa garansi yang jelas untuk setiap pembelian. Anda tidak perlu ragu karena kualitasnya telah teruji dan banyak dipercaya oleh para profesional.</p>
+                                        <p>Pesan sekarang dan nikmati layanan pengiriman super cepat, atau booking langsung pemasangan di bengkel mitra terdekat kami melalui aplikasi BengkelGoFix.</p>
+                                    </div>
+                                    <button 
+                                        onClick={() => {
+                                            setOpenSheetId(null);
+                                            toast.success("Produk berhasil ditambahkan ke keranjang!");
+                                            setTimeout(() => navigate("/login"), 1500);
+                                        }}
+                                        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95"
+                                    >
+                                        Tambah ke Keranjang
+                                    </button>
+                                </SheetContent>
+                            </Sheet>
                         ))}
                     </div>
                 </div>
@@ -303,10 +354,29 @@ export default function GuestLanding() {
                         </p>
                         
                         <h4 className="font-bold text-white text-lg mb-1">{testimonials[activeTestimonial].name}</h4>
-                        <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+                        <div className="flex items-center justify-center gap-2 text-sm text-gray-500 mb-6">
                             <FaMapMarkerAlt className="text-orange-400" /> {testimonials[activeTestimonial].location}
                             <span className="text-gray-700">•</span> 🏍️ {testimonials[activeTestimonial].vehicle}
                         </div>
+                        
+                        <Collapsible 
+                            open={openCollapsibleId === activeTestimonial} 
+                            onOpenChange={(isOpen) => setOpenCollapsibleId(isOpen ? activeTestimonial : null)}
+                            className="w-full relative z-10"
+                        >
+                            <CollapsibleTrigger asChild>
+                                <button className="text-sm font-medium text-orange-400 hover:text-orange-300 flex items-center justify-center gap-2 mx-auto transition-colors">
+                                    Lihat Pengalaman Lengkap {openCollapsibleId === activeTestimonial ? <FaChevronUp /> : <FaChevronDown />}
+                                </button>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent className="mt-4 text-gray-400 text-sm leading-relaxed max-w-2xl mx-auto overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down transition-all">
+                                <div className="p-5 bg-white/5 rounded-2xl border border-white/10 text-left space-y-3 shadow-inner">
+                                    <p>Saya awalnya ragu untuk mencoba servis online, tapi setelah melihat review positif, saya memutuskan booking servis di BengkelGoFix. Prosesnya sangat mudah, saya hanya perlu memasukkan kendala motor saya dan aplikasi langsung mencarikan bengkel mitra terdekat.</p>
+                                    <p>Mekanik yang menangani motor saya, Mas Joko, sangat profesional dan ramah. Beliau menjelaskan dengan detail apa saja yang perlu diganti dan mengapa. Tidak ada biaya tersembunyi, semua transparan sesuai yang tertera di aplikasi.</p>
+                                    <p>Pengerjaannya cepat dan rapi. Motor saya sekarang terasa seperti baru kembali. Sangat direkomendasikan untuk siapa saja yang butuh layanan servis motor yang jujur, cepat, dan berkualitas. Pasti akan menggunakan BengkelGoFix lagi untuk servis rutin berikutnya!</p>
+                                </div>
+                            </CollapsibleContent>
+                        </Collapsible>
                     </div>
 
                     <div className="flex justify-center gap-4 mt-10">
@@ -371,6 +441,30 @@ export default function GuestLanding() {
             </footer>
 
             <FloatingChat />
+
+            {/* FAB */}
+            <div 
+                className={`fixed bottom-24 right-6 z-[60] flex flex-col items-center gap-3 transition-all duration-500 ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}
+                onMouseEnter={() => setIsFabHovered(true)}
+                onMouseLeave={() => setIsFabHovered(false)}
+            >
+                <div className={`flex flex-col gap-3 transition-all duration-300 ${isFabHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                    <button onClick={() => scrollTo(vouchersRef)} className="w-10 h-10 bg-slate-800 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-orange-500 hover:text-white transition-all shadow-lg hover:scale-110" title="Promo">
+                        <FaTags className="text-sm" />
+                    </button>
+                    <button onClick={() => scrollTo(productsRef)} className="w-10 h-10 bg-slate-800 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-orange-500 hover:text-white transition-all shadow-lg hover:scale-110" title="Produk">
+                        <FaBox className="text-sm" />
+                    </button>
+                    <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className="w-10 h-10 bg-slate-800 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-orange-500 hover:text-white transition-all shadow-lg hover:scale-110" title="Hubungi Kami">
+                        <FaPhoneAlt className="text-sm" />
+                    </a>
+                </div>
+                <button onClick={() => scrollTo(heroRef)} className="w-14 h-14 bg-orange-500 text-white rounded-full flex items-center justify-center shadow-xl shadow-orange-500/30 hover:scale-110 active:scale-95 transition-all">
+                    <FaArrowUp className="text-xl" />
+                </button>
+            </div>
+
+            <Toaster position="top-center" richColors theme="dark" />
         </div>
     );
 }
