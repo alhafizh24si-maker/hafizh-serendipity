@@ -6,11 +6,15 @@ import {
     FaCheckCircle, FaMapMarkerAlt, FaGift, FaRocket, 
     FaShieldAlt, FaUsers, FaClock, FaTags, FaBox, 
     FaPhoneAlt, FaHome, FaUserCheck, FaWallet, FaQuoteLeft,
-    FaEye, FaArrowUp, FaChevronDown, FaChevronUp
+    FaEye, FaArrowUp, FaChevronDown, FaChevronUp, FaSun, FaMoon, FaCircle
 } from "react-icons/fa";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "../components/ui/sheet";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "../components/ui/collapsible";
 import { Toaster, toast } from "sonner";
+import { Switch } from "../components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { Checkbox } from "../components/ui/checkbox";
+import { Label } from "../components/ui/label";
 
 export default function GuestLanding() {
     const navigate = useNavigate();
@@ -24,6 +28,15 @@ export default function GuestLanding() {
     const [openCollapsibleId, setOpenCollapsibleId] = useState(null);
     const [isFabHovered, setIsFabHovered] = useState(false);
 
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        const saved = localStorage.getItem('bengkelgofix-theme');
+        return saved !== null ? saved === 'dark' : true;
+    });
+
+    const [selectedMotor, setSelectedMotor] = useState("");
+    const [selectedService, setSelectedService] = useState("");
+    const [selectedParts, setSelectedParts] = useState([]);
+
     const heroRef = useRef(null);
     const vouchersRef = useRef(null);
     const productsRef = useRef(null);
@@ -32,6 +45,23 @@ export default function GuestLanding() {
     const testimonialsRef = useRef(null);
 
     // Data Arrays
+    const liveActivities = [
+        { id: 1, text: "Budi dari Rumbai baru saja booking Servis Rutin — 2 menit yang lalu" },
+        { id: 2, text: "Siti dari Panam mengklaim voucher DISKON20K — 5 menit yang lalu" },
+        { id: 3, text: "Andi dari Diponegoro memberi rating 5 bintang — 8 menit yang lalu" },
+        { id: 4, text: "Bengkel Maju Jaya baru bergabung sebagai Mitra — 12 menit yang lalu" },
+    ];
+
+    const servicePrices = { "Ganti Oli": 50000, "Servis Rutin": 150000, "Ganti Kampas Rem": 75000, "Tune Up Mesin": 200000 };
+    const partPrices = { "Oli Mesin": 65000, "Filter Udara": 35000, "Busi": 25000, "Aki": 210000 };
+
+    const calculateTotal = () => {
+        let total = servicePrices[selectedService] || 0;
+        selectedParts.forEach(part => { total += partPrices[part] || 0; });
+        return total;
+    };
+    const estimatedTime = selectedService === "Tune Up Mesin" ? "60-90 Menit" : selectedService === "Servis Rutin" ? "45-60 Menit" : "15-30 Menit";
+
     const vouchers = [
         { id: "FIXNEW20", title: "Diskon Member Baru", desc: "Potongan Rp 20.000 untuk servis pertama + Gratis Cuci Motor", value: "20K", icon: <FaGift /> },
         { id: "OLIMAX", title: "Bundling Ganti Oli", desc: "Diskon 10% + Gratis Cek Kelistrikan + Filter Udara", value: "10%", icon: <FaRocket /> },
@@ -78,6 +108,10 @@ export default function GuestLanding() {
     }, []);
 
     useEffect(() => {
+        localStorage.setItem('bengkelgofix-theme', isDarkMode ? 'dark' : 'light');
+    }, [isDarkMode]);
+
+    useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
                 const duration = 2000, steps = 60;
@@ -108,17 +142,20 @@ export default function GuestLanding() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 font-sans text-gray-800 overflow-hidden">
+        <div className={`min-h-screen font-sans overflow-hidden transition-colors duration-300 ${isDarkMode ? 'bg-slate-950 text-gray-300' : 'bg-gray-50 text-gray-800'}`}>
             <style>{`
-                .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+                .glass { background: ${isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.8)'}; backdrop-filter: blur(20px); border: 1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}; }
                 .glass-light { background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.5); }
-                .glass-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+                .glass-card { background: ${isDarkMode ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,1)'}; backdrop-filter: blur(12px); border: 1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}; box-shadow: ${isDarkMode ? 'none' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}; }
                 
                 @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
                 @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+                @keyframes marquee { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
                 
                 .animate-float { animation: float 6s ease-in-out infinite; }
                 .animate-fade-up { animation: fadeUp 0.8s ease-out forwards; }
+                .animate-marquee { animation: marquee 25s linear infinite; display: flex; width: max-content; }
+                .animate-marquee:hover { animation-play-state: paused; }
                 
                 .glow-orange { box-shadow: 0 0 30px rgba(249, 115, 22, 0.3); }
                 .glow-text { text-shadow: 0 0 40px rgba(249, 115, 22, 0.5); }
@@ -139,15 +176,22 @@ export default function GuestLanding() {
 
                         <div className="hidden md:flex items-center gap-1">
                             {[{ label: "Beranda", icon: <FaHome />, ref: heroRef }, { label: "Promo", icon: <FaTags />, ref: vouchersRef }, { label: "Produk", icon: <FaBox />, ref: productsRef }].map((item, idx) => (
-                                <button key={idx} onClick={() => scrollTo(item.ref)} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${isScrolled ? 'text-gray-600 hover:text-orange-500 hover:bg-orange-50' : 'text-white/80 hover:text-white hover:bg-white/10'}`}>
+                                <button key={idx} onClick={() => scrollTo(item.ref)} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${isScrolled ? 'text-gray-600 hover:text-orange-500 hover:bg-orange-50' : (isDarkMode ? 'text-white/80 hover:text-white hover:bg-white/10' : 'text-gray-800 hover:text-orange-500 hover:bg-white/50')}`}>
                                     {item.icon} {item.label}
                                 </button>
                             ))}
                         </div>
 
-                        <button onClick={() => navigate("/login")} className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:scale-105 shadow-lg shadow-orange-500/30">
-                            Masuk / Daftar
-                        </button>
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                                <FaSun className={isDarkMode ? "text-gray-500" : "text-orange-500"} />
+                                <Switch checked={isDarkMode} onCheckedChange={setIsDarkMode} />
+                                <FaMoon className={isDarkMode ? "text-orange-400" : "text-gray-400"} />
+                            </div>
+                            <button onClick={() => navigate("/login")} className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:scale-105 shadow-lg shadow-orange-500/30">
+                                Masuk / Daftar
+                            </button>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -174,15 +218,28 @@ export default function GuestLanding() {
                             Booking servis online, harga transparan, dan mekanik profesional. Didukung teknologi AI untuk pengalaman servis tanpa ribet.
                         </p>
 
-                        <div className="flex items-center glass rounded-2xl p-2 max-w-md mb-10 glow-orange">
+                        <div className="flex items-center glass rounded-2xl p-2 max-w-md mb-6 glow-orange">
                             <FaSearch className="text-gray-400 ml-4" />
-                            <input type="text" placeholder="Cari bengkel atau spare part..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 text-sm px-3" />
+                            <input type="text" placeholder="Cari bengkel atau spare part..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`flex-1 bg-transparent border-none outline-none placeholder-gray-500 text-sm px-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`} />
                             <button className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-6 py-3 rounded-xl transition-all">Cari</button>
+                        </div>
+
+                        <div className="w-full max-w-md mb-10 overflow-hidden glass rounded-full py-2 relative">
+                            <div className={`absolute left-0 top-0 bottom-0 w-8 z-10 ${isDarkMode ? 'bg-gradient-to-r from-[rgba(0,0,0,0.5)] to-transparent' : 'bg-gradient-to-r from-[rgba(255,255,255,0.8)] to-transparent'}`}></div>
+                            <div className={`absolute right-0 top-0 bottom-0 w-8 z-10 ${isDarkMode ? 'bg-gradient-to-l from-[rgba(0,0,0,0.5)] to-transparent' : 'bg-gradient-to-l from-[rgba(255,255,255,0.8)] to-transparent'}`}></div>
+                            <div className="animate-marquee gap-8 px-4 cursor-default">
+                                {liveActivities.map((activity) => (
+                                    <div key={activity.id} className={`flex items-center gap-2 whitespace-nowrap text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-800 font-medium'}`}>
+                                        <FaCircle className="text-emerald-500 text-[8px] animate-pulse" />
+                                        {activity.text}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="flex flex-wrap gap-6">
                             {[{ icon: <FaShieldAlt />, text: "Garansi 30 Hari" }, { icon: <FaUserCheck />, text: "Mekanik Sertifikat" }, { icon: <FaWallet />, text: "Harga Transparan" }].map((b, i) => (
-                                <div key={i} className="flex items-center gap-2 text-white/70 text-sm"><span className="text-orange-400">{b.icon}</span> {b.text}</div>
+                                <div key={i} className={`flex items-center gap-2 text-sm ${isDarkMode ? 'text-white/70' : 'text-gray-800 font-medium'}`}><span className="text-orange-400">{b.icon}</span> {b.text}</div>
                             ))}
                         </div>
                     </div>
@@ -211,12 +268,12 @@ export default function GuestLanding() {
             </section>
 
             {/* VOUCHERS */}
-            <section id="vouchers" ref={vouchersRef} className="py-24 px-6 bg-slate-950 relative">
+            <section id="vouchers" ref={vouchersRef} className={`py-24 px-6 relative ${isDarkMode ? 'bg-slate-950' : 'bg-white'}`}>
                 <div className="absolute top-0 left-0 w-96 h-96 bg-orange-500/10 rounded-full filter blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
                 <div className="max-w-7xl mx-auto relative z-10">
                     <div className={`text-center mb-16 ${visibleSections.has('vouchers') ? 'animate-fade-up' : 'opacity-0'}`}>
                         <span className="text-orange-500 font-bold text-sm uppercase tracking-widest">Promo Spesial</span>
-                        <h2 className="text-4xl md:text-5xl font-extrabold mt-3 mb-4 text-white">Klaim Voucher Diskon</h2>
+                        <h2 className={`text-4xl md:text-5xl font-extrabold mt-3 mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Klaim Voucher Diskon</h2>
                         <p className="text-gray-500 max-w-xl mx-auto">Nikmati berbagai promo menarik untuk pengalaman servis terbaik dan lebih hemat</p>
                     </div>
 
@@ -229,8 +286,8 @@ export default function GuestLanding() {
                                         <div className="bg-orange-500/10 p-4 rounded-2xl text-orange-400 text-2xl group-hover:bg-orange-500 group-hover:text-white transition-all">{v.icon}</div>
                                         <span className="glass text-orange-300 text-xs font-bold px-3 py-1 rounded-full">VOUCHER</span>
                                     </div>
-                                    <span className="text-4xl font-extrabold text-white block mb-2">Rp {v.value}</span>
-                                    <h3 className="font-bold text-white mb-2">{v.title}</h3>
+                                    <span className={`text-4xl font-extrabold block mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Rp {v.value}</span>
+                                    <h3 className={`font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{v.title}</h3>
                                     <p className="text-gray-500 text-sm mb-8">{v.desc}</p>
                                     <div className="flex items-center justify-between pt-4 border-t border-white/5">
                                         <code className="text-xs text-gray-600 bg-white/5 px-3 py-1.5 rounded-lg font-mono">{v.id}</code>
@@ -245,8 +302,119 @@ export default function GuestLanding() {
                 </div>
             </section>
 
+            {/* CALCULATOR */}
+            <section id="kalkulator" className={`py-24 px-6 ${isDarkMode ? 'bg-slate-900' : 'bg-gray-100'}`}>
+                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <span className="text-orange-500 font-bold text-sm uppercase tracking-widest">Kalkulator Servis</span>
+                        <h2 className={`text-4xl md:text-5xl font-extrabold mt-3 mb-6 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Estimasi Biaya Transparan</h2>
+                        <p className={`mb-10 text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dapatkan perkiraan biaya sebelum Anda datang ke bengkel. Tidak ada biaya tersembunyi.</p>
+                        
+                        <div className="space-y-8">
+                            <div>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-sm">1</div>
+                                    <h3 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Pilih Jenis Motor</h3>
+                                </div>
+                                <Select onValueChange={setSelectedMotor} value={selectedMotor}>
+                                    <SelectTrigger className={`w-full ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}>
+                                        <SelectValue placeholder="Pilih tipe motor Anda" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Matic">Matic</SelectItem>
+                                        <SelectItem value="Sport">Sport</SelectItem>
+                                        <SelectItem value="Cub/Bebek">Cub / Bebek</SelectItem>
+                                        <SelectItem value="Trail">Trail</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-sm">2</div>
+                                    <h3 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Pilih Layanan</h3>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    {Object.keys(servicePrices).map(service => (
+                                        <button 
+                                            key={service} 
+                                            onClick={() => setSelectedService(service)}
+                                            className={`p-4 rounded-xl border text-left transition-all ${selectedService === service ? 'border-orange-500 bg-orange-500/10' : (isDarkMode ? 'border-slate-700 bg-slate-800 text-gray-300 hover:border-slate-500' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300')}`}
+                                        >
+                                            <div className="font-semibold">{service}</div>
+                                            <div className="text-orange-500 text-sm mt-1">Mulai Rp {servicePrices[service].toLocaleString('id-ID')}</div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-sm">3</div>
+                                    <h3 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Tambah Spare Part (Opsional)</h3>
+                                </div>
+                                <div className="space-y-3">
+                                    {Object.keys(partPrices).map(part => (
+                                        <div key={part} className="flex items-center space-x-3">
+                                            <Checkbox 
+                                                id={`part-${part}`} 
+                                                checked={selectedParts.includes(part)}
+                                                onCheckedChange={(checked) => {
+                                                    if (checked) setSelectedParts([...selectedParts, part]);
+                                                    else setSelectedParts(selectedParts.filter(p => p !== part));
+                                                }}
+                                            />
+                                            <Label htmlFor={`part-${part}`} className={`text-sm cursor-pointer ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                {part} <span className="text-orange-500">(+Rp {partPrices[part].toLocaleString('id-ID')})</span>
+                                            </Label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="h-full flex items-center">
+                        <div className={`glass-card rounded-[2rem] p-8 w-full border-l-4 border-l-orange-500 relative overflow-hidden`}>
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl"></div>
+                            <h3 className={`text-xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Estimasi Biaya</h3>
+                            
+                            <div className="space-y-4 mb-8">
+                                <div className="flex justify-between text-sm">
+                                    <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>Tipe Motor</span>
+                                    <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{selectedMotor || "-"}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>Layanan Utama</span>
+                                    <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{selectedService || "-"}</span>
+                                </div>
+                                {selectedParts.length > 0 && (
+                                    <div className="flex justify-between text-sm">
+                                        <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>Tambahan Part</span>
+                                        <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} text-right`}>{selectedParts.join(", ")}</span>
+                                    </div>
+                                )}
+                                <div className="pt-4 border-t border-gray-500/20 flex justify-between items-center">
+                                    <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>Total Estimasi</span>
+                                    <span className="text-3xl font-extrabold text-orange-500">Rp {calculateTotal().toLocaleString('id-ID')}</span>
+                                </div>
+                            </div>
+                            
+                            <div className={`flex items-center gap-2 text-xs mb-8 p-3 rounded-xl ${isDarkMode ? 'bg-orange-500/10 text-orange-200' : 'bg-orange-50 text-orange-800'}`}>
+                                <FaClock className="text-orange-500" /> Estimasi Waktu: <span className="font-bold">{estimatedTime}</span>
+                            </div>
+
+                            <button onClick={() => navigate("/register")} disabled={!selectedService} className={`w-full py-4 rounded-xl font-bold transition-all shadow-lg ${selectedService ? 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105' : 'bg-gray-500/50 text-gray-300 cursor-not-allowed'}`}>
+                                Booking Sekarang
+                            </button>
+                            <p className="text-center text-xs mt-4 text-gray-500">Harga final akan disesuaikan setelah inspeksi mekanik di bengkel.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* PRODUCTS */}
-            <section id="products" ref={productsRef} className="py-24 px-6 bg-white">
+            <section id="products" ref={productsRef} className={`py-24 px-6 ${isDarkMode ? 'bg-slate-950' : 'bg-slate-100'}`}>
                 <div className="max-w-7xl mx-auto">
                     <div className={`flex flex-col sm:flex-row sm:items-end justify-between mb-16 gap-4 ${visibleSections.has('products') ? 'animate-fade-up' : 'opacity-0'}`}>
                         <div>
@@ -327,12 +495,12 @@ export default function GuestLanding() {
             </section>
 
             {/* TESTIMONIALS */}
-            <section id="testimonials" ref={testimonialsRef} className="py-24 px-6 bg-slate-950 relative overflow-hidden">
+            <section id="testimonials" ref={testimonialsRef} className={`py-24 px-6 relative overflow-hidden ${isDarkMode ? 'bg-slate-950' : 'bg-white'}`}>
                 <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-500/10 rounded-full filter blur-3xl translate-x-1/2 translate-y-1/2"></div>
                 <div className="max-w-4xl mx-auto text-center relative z-10">
                     <div className={`mb-16 ${visibleSections.has('testimonials') ? 'animate-fade-up' : 'opacity-0'}`}>
                         <span className="text-orange-500 font-bold text-sm uppercase tracking-widest">Testimonial</span>
-                        <h2 className="text-4xl md:text-5xl font-extrabold mt-3 mb-4 text-white">Apa Kata Pelanggan?</h2>
+                        <h2 className={`text-4xl md:text-5xl font-extrabold mt-3 mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Apa Kata Pelanggan?</h2>
                     </div>
                     
                     <div className={`glass rounded-3xl p-10 md:p-14 relative ${visibleSections.has('testimonials') ? 'animate-fade-up' : 'opacity-0'}`}>
@@ -349,11 +517,11 @@ export default function GuestLanding() {
                             </div>
                         </div>
                         
-                        <p className="text-gray-300 text-xl leading-relaxed italic max-w-2xl mx-auto mb-8 relative z-10">
+                        <p className={`text-xl leading-relaxed italic max-w-2xl mx-auto mb-8 relative z-10 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                             "{testimonials[activeTestimonial].text}"
                         </p>
                         
-                        <h4 className="font-bold text-white text-lg mb-1">{testimonials[activeTestimonial].name}</h4>
+                        <h4 className={`font-bold text-lg mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{testimonials[activeTestimonial].name}</h4>
                         <div className="flex items-center justify-center gap-2 text-sm text-gray-500 mb-6">
                             <FaMapMarkerAlt className="text-orange-400" /> {testimonials[activeTestimonial].location}
                             <span className="text-gray-700">•</span> 🏍️ {testimonials[activeTestimonial].vehicle}
@@ -390,7 +558,7 @@ export default function GuestLanding() {
             </section>
 
             {/* CTA */}
-            <section id="cta" ref={ctaRef} className="py-24 px-6 bg-white">
+            <section id="cta" ref={ctaRef} className={`py-24 px-6 ${isDarkMode ? 'bg-slate-950' : 'bg-slate-100'}`}>
                 <div className={`max-w-5xl mx-auto bg-gradient-to-br from-slate-900 to-gray-900 rounded-[2.5rem] p-14 md:p-20 text-center text-white relative overflow-hidden ${visibleSections.has('cta') ? 'animate-fade-up' : 'opacity-0'}`}>
                     <div className="absolute top-0 left-0 w-64 h-64 bg-orange-500/20 rounded-full filter blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
                     <div className="absolute bottom-0 right-0 w-64 h-64 bg-orange-500/20 rounded-full filter blur-3xl translate-x-1/2 translate-y-1/2"></div>
@@ -412,7 +580,7 @@ export default function GuestLanding() {
             </section>
 
             {/* FOOTER */}
-            <footer className="bg-slate-950 text-white pt-20 pb-10 px-6 border-t border-white/5">
+            <footer className={`pt-20 pb-10 px-6 border-t ${isDarkMode ? 'bg-slate-950 text-white border-white/5' : 'bg-white text-gray-900 border-gray-200'}`}>
                 <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-12 mb-12">
                     <div>
                         <div className="flex items-center gap-2 mb-6">
