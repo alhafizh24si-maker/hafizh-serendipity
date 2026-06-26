@@ -729,7 +729,7 @@ export default function GuestLanding() {
                         <p className="text-gray-400 max-w-xl mx-auto mb-10 text-lg">Tingkatkan omzet bengkel Anda hingga 3x lipat dengan platform terintegrasi kami.</p>
                         <div className="flex gap-4 justify-center flex-wrap">
                             <button onClick={() => { trackEvent('cta_click', { button: 'mitra' }); handleCtaClick('cta-mitra'); }} className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-full transition-all shadow-xl shadow-orange-500/30 hover:scale-105 active:scale-95 text-lg">
-                                Gabung Mitra Sekarang
+                                Daftar Sekarang
                             </button>
                             <button onClick={() => { trackEvent('cta_click', { button: 'consultation' }); handleCtaClick('cta-consultation'); }} className="glass hover:bg-white/10 text-white font-bold px-8 py-4 rounded-full transition-all shadow-xl hover:scale-105 active:scale-95 text-lg">
                                 Konsultasi Gratis
