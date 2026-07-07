@@ -1,17 +1,41 @@
-import React, { useState } from 'react';
-import { FaWrench, FaExclamationTriangle, FaCheckCircle, FaPlus, FaTrashAlt, FaMotorcycle, FaUserTie, FaCheckDouble, FaUserCheck, FaTimes } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { 
+  FaWrench, 
+  FaExclamationTriangle, 
+  FaCheckCircle, 
+  FaPlus, 
+  FaTrashAlt, 
+  FaMotorcycle, 
+  FaUserTie, 
+  FaCheckDouble, 
+  FaUserCheck, 
+  FaTimes 
+} from 'react-icons/fa';
 
 // Asumsi import Shadcn UI tersedia di project Anda
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 export default function MechanicCrmDashboard() {
-  // 1. State untuk Antrian Kendaraan (Ditambahkan status 'Pending Konfirmasi')
-  const [queue, setQueue] = useState([
-    { id: 'Q001', plat: 'B 1234 XY', owner: 'Budi S. (Member)', issue: 'Ganti Oli & Tune Up', status: 'Pending Konfirmasi', mechanicId: null },
-    { id: 'Q002', plat: 'D 5678 AB', owner: 'Siti R.', issue: 'Starter Mati', status: 'Dikerjakan', mechanicId: 'm1' },
-    { id: 'Q003', plat: 'P 9012 CD', owner: 'Andi W.', issue: 'Kampas Rem Bunyi', status: 'Menunggu', mechanicId: null },
-  ]);
+  // 1. Sinkronisasi State Antrian dengan LocalStorage (Key: 'gofix_queue')
+  const [queue, setQueue] = useState(() => {
+    const savedQueue = localStorage.getItem('gofix_queue');
+    if (savedQueue) {
+      try {
+        return JSON.parse(savedQueue);
+      } catch (e) {
+        console.error("Gagal parse data gofix_queue", e);
+      }
+    }
+    // Default data jika localStorage masih kosong
+    const defaultData = [
+      { id: 'Q-001', plat: 'B 1234 XY', owner: 'Budi S. (Member)', issue: 'Ganti Oli & Tune Up', status: 'Pending Konfirmasi', mechanicId: null, date: '2026-07-07' },
+      { id: 'Q-002', plat: 'D 5678 AB', owner: 'Siti R.', issue: 'Starter Mati', status: 'Dikerjakan', mechanicId: 'm1', date: '2026-07-07' },
+      { id: 'Q-003', plat: 'P 9012 CD', owner: 'Andi W.', issue: 'Kampas Rem Bunyi', status: 'Menunggu', mechanicId: null, date: '2026-07-07' },
+    ];
+    localStorage.setItem('gofix_queue', JSON.stringify(defaultData));
+    return defaultData;
+  });
 
   // 2. State untuk Mekanik
   const [mechanics, setMechanics] = useState([
@@ -32,17 +56,34 @@ export default function MechanicCrmDashboard() {
 
   const [crmAlert, setCrmAlert] = useState({ show: false, type: 'success', title: '', msg: '' });
 
+  // EFFECT A: Simpan data ke localStorage setiap kali ada perubahan data 'queue' di Admin
+  useEffect(() => {
+    localStorage.setItem('gofix_queue', JSON.stringify(queue));
+  }, [queue]);
+
+  // EFFECT B: Listen perubahan dari tab/jendela lain (Real-time listener saat member input)
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'gofix_queue' && e.newValue) {
+        setQueue(JSON.parse(e.newValue));
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   // Fungsi Tambah Antrian Langsung oleh Admin (Langsung berstatus 'Menunggu')
   const handleAddQueue = (e) => {
     e.preventDefault();
     if (!newPlat || !newOwner || !newIssue) return;
     const newItem = {
-      id: `Q${Date.now()}`,
+      id: `ADM-${Date.now().toString().slice(-4)}`,
       plat: newPlat.toUpperCase(),
       owner: newOwner,
       issue: newIssue,
       status: 'Menunggu',
-      mechanicId: null
+      mechanicId: null,
+      date: new Date().toISOString().split('T')[0]
     };
     setQueue([newItem, ...queue]);
     setNewPlat('');
@@ -51,17 +92,18 @@ export default function MechanicCrmDashboard() {
     triggerAlert('success', 'Antrian Ditambahkan!', `Kendaraan ${newItem.plat} langsung masuk antrian.`);
   };
 
-  // FUNGSI BARU: Simulasi Pemesanan oleh Member (Masuk sebagai 'Pending Konfirmasi')
+  // Simulasi Pemesanan oleh Member (Masuk sebagai 'Pending Konfirmasi')
   const handleMemberOrder = (e) => {
     e.preventDefault();
     if (!memberPlat || !memberOwner || !memberIssue) return;
     const newOrder = {
-      id: `Q${Date.now()}`,
+      id: `MBR-${Date.now().toString().slice(-4)}`,
       plat: memberPlat.toUpperCase(),
       owner: `${memberOwner} (Member)`,
       issue: memberIssue,
       status: 'Pending Konfirmasi',
-      mechanicId: null
+      mechanicId: null,
+      date: new Date().toISOString().split('T')[0]
     };
     setQueue([newOrder, ...queue]);
     setMemberPlat('');
@@ -70,7 +112,7 @@ export default function MechanicCrmDashboard() {
     triggerAlert('success', 'Pesanan Member Terkirim!', `Menunggu konfirmasi admin untuk plat ${newOrder.plat}.`);
   };
 
-  // FUNGSI BARU: Konfirmasi Pesanan Member oleh Admin
+  // Konfirmasi Pesanan Member oleh Admin
   const confirmMemberOrder = (queueId) => {
     setQueue(queue.map(q => q.id === queueId ? { ...q, status: 'Menunggu' } : q));
     triggerAlert('success', 'Pesanan Dikonfirmasi!', 'Pesanan disetujui dan masuk daftar antrian utama.');
@@ -256,7 +298,7 @@ export default function MechanicCrmDashboard() {
                     {/* AKSI BARU: Untuk status Pending Konfirmasi */}
                     {item.status === 'Pending Konfirmasi' && (
                       <div className="flex items-center gap-2 pt-3 border-t border-gray-100 mt-2 bg-purple-50/50 p-2 rounded-lg">
-                        <span className="text-[10px] font-bold text-purple-700 uppercase tracking-wider mr-auto">Pesanan Masuk dari Member:</span>
+                        <span className="text-[10px] font-bold text-purple-700 uppercase tracking-wider mr-auto">Pesanan Masuk:</span>
                         <button 
                           onClick={() => deleteQueue(item.id, true)} 
                           className="bg-rose-100 text-rose-700 hover:bg-rose-200 font-bold px-3 py-1.5 rounded-lg transition text-xs flex items-center gap-1"
@@ -302,6 +344,9 @@ export default function MechanicCrmDashboard() {
                   </div>
                 );
               })}
+              {queue.length === 0 && (
+                <div className="text-center py-8 text-gray-400 font-medium text-sm">Tidak ada antrian saat ini.</div>
+              )}
             </div>
           </div>
         </div>

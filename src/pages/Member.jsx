@@ -184,27 +184,34 @@ export default function Member() {
     alert(`Sukses klaim ${reward.title}! Kode voucher: ${newClaim.code}`);
   };
 
-  // ACTION ADMIN: Terima & Selesaikan status service
+  // ACTION ADMIN: Terima & Selesaikan status service (SUDAH DIPERBAIKI)
   const handleApproveService = (txId) => {
     setQueue(prevQueue => 
       prevQueue.map(item => {
         if (item.id === txId) {
-          if (item.owner === user.name) {
-            const newTotalTx = memberStats.totalTransactions + 1;
-            
-            // Penentuan Tier Otomatis berdasarkan Jumlah Transaksi
-            let currentTier = "Regular Customer";
-            if (newTotalTx >= 5 && newTotalTx < 10) currentTier = "Bronze Member 🥉";
-            if (newTotalTx >= 10 && newTotalTx < 20) currentTier = "Silver Member 🥈";
-            if (newTotalTx >= 20) currentTier = "Gold Member 🥇";
+          // Ambil langsung dari localStorage agar data ter-update secara global
+          const savedStats = localStorage.getItem("gofix_member_stats");
+          let currentStats = savedStats ? JSON.parse(savedStats) : { ...memberStats };
 
-            setMemberStats(prev => ({
-              ...prev,
-              totalTransactions: newTotalTx,
-              points: prev.points + item.pointsEarned, // Poin baru ditambahkan ke dompet poin saat status Selesai
-              tier: currentTier
-            }));
-          }
+          const newTotalTx = currentStats.totalTransactions + 1;
+          
+          // Penentuan Tier Otomatis berdasarkan Jumlah Transaksi Baru
+          let currentTier = "Regular Customer";
+          if (newTotalTx >= 5 && newTotalTx < 10) currentTier = "Bronze Member 🥉";
+          if (newTotalTx >= 10 && newTotalTx < 20) currentTier = "Silver Member 🥈";
+          if (newTotalTx >= 20) currentTier = "Gold Member 🥇";
+
+          const updatedStats = {
+            ...currentStats,
+            totalTransactions: newTotalTx,
+            points: currentStats.points + (item.pointsEarned || 0), 
+            tier: currentTier
+          };
+
+          // Simpan ke state dan localStorage
+          setMemberStats(updatedStats);
+          localStorage.setItem("gofix_member_stats", JSON.stringify(updatedStats));
+
           return { ...item, status: "Selesai" }; 
         }
         return item;
@@ -460,7 +467,7 @@ export default function Member() {
               </div>
             )}
 
-            {/* HALAMAN KONTROL ADMIN (DENGAN REFRESH AUTO KE STORAGE) */}
+            {/* HALAMAN KONTROL ADMIN */}
             {user.role === "admin" && (
               <div className="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm">
                 <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
