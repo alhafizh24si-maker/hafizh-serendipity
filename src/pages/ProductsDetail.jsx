@@ -1,11 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useRef } from "react"; // HOOK: Mengimport useState dan useRef
-import products from "../data/products.json";
+import { useState, useRef, useEffect } from "react"; // HOOK: Ditambahkan useEffect
+import productsData from "../data/products.json"; // Ubah nama import agar tidak bentrok
 import { FaArrowLeft, FaTools, FaFolderPlus } from "react-icons/fa";
 
 export default function ProductsDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  
+  // HOOK: useState untuk menampung data produk terpilih
+  const [product, setProduct] = useState(null);
   
   // HOOK: useState untuk menyimpan catatan lokasi rak sparepart
   const [rackLocation, setRackLocation] = useState("");
@@ -13,13 +16,44 @@ export default function ProductsDetail() {
   // HOOK: useRef untuk memegang kendali atas DOM input lokasi rak
   const noteInputRef = useRef(null);
 
-  const product = products.find((p) => p.id === parseInt(id));
+  // AMBIL DATA DARI LOCALSTORAGE AGAR SINKRON DENGAN PRODUK BARU
+  useEffect(() => {
+    const savedInventory = localStorage.getItem("bengkelgo_inventory");
+    const currentProducts = savedInventory ? JSON.parse(savedInventory) : productsData;
+    
+    // Perbaikan: Bandingkan menggunakan .toString() agar aman dari perbedaan String/Number
+    const foundProduct = currentProducts.find((p) => p.id.toString() === id.toString());
+    
+    if (foundProduct) {
+      setProduct(foundProduct);
+      // Ambil lokasi rak bawaan jika ada di database/state
+      setRackLocation(foundProduct.rackLocation || "");
+    }
+  }, [id]);
 
   // Fungsi memindahkan fokus kursor secara paksa ke input text menggunakan ref
   const handleManageStockClick = () => {
-    noteInputRef.current.focus();
-    // Efek visual tambahan: memberikan style border highlight saat difokuskan
-    noteInputRef.current.classList.add("border-[#FF6B2C]");
+    if (noteInputRef.current) {
+      noteInputRef.current.focus();
+      // Efek visual tambahan: memberikan style border highlight saat difokuskan
+      noteInputRef.current.classList.add("border-[#FF6B2C]", "ring-2", "ring-[#FF6B2C]/20");
+    }
+  };
+
+  // Handler untuk menyimpan lokasi rak ke localStorage (Opsional untuk kelengkapan fitur)
+  const handleSaveRack = () => {
+    const savedInventory = localStorage.getItem("bengkelgo_inventory");
+    const currentProducts = savedInventory ? JSON.parse(savedInventory) : productsData;
+    
+    const updatedProducts = currentProducts.map((p) => {
+      if (p.id.toString() === id.toString()) {
+        return { ...p, rackLocation: rackLocation };
+      }
+      return p;
+    });
+
+    localStorage.setItem("bengkelgo_inventory", JSON.stringify(updatedProducts));
+    alert("Lokasi rak inventaris berhasil diperbarui!");
   };
 
   if (!product) return (
@@ -41,6 +75,7 @@ export default function ProductsDetail() {
 
       <div className="max-w-5xl bg-white rounded-[3rem] border border-orange-100/30 shadow-2xl shadow-orange-900/5 overflow-hidden flex flex-col md:flex-row mx-auto">
         
+        {/* Sisi Gambar */}
         <div className="md:w-1/2 bg-gradient-to-br from-[#FFF9F3] to-white p-8 flex items-center justify-center border-r border-orange-50/50">
           <div className="relative w-full aspect-square bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-orange-50 group">
             {product.image ? (
@@ -60,6 +95,7 @@ export default function ProductsDetail() {
           </div>
         </div>
 
+        {/* Sisi Informasi Konten */}
         <div className="md:w-1/2 p-12 flex flex-col justify-center">
           <div className="flex items-center gap-3 mb-6">
             <span className="bg-orange-50 text-[#FF6B2C] text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">
@@ -72,7 +108,7 @@ export default function ProductsDetail() {
             {product.title}
           </h1>
           <p className="text-gray-500 text-sm leading-relaxed mb-6">
-            {product.description}
+            {product.description || "Tidak ada deskripsi untuk produk ini."}
           </p>
 
           <div className="grid grid-cols-2 gap-4 mb-6">
@@ -88,13 +124,23 @@ export default function ProductsDetail() {
             </div>
           </div>
 
-          {/* FITUR BARU: Form Lokasi Rak Inventaris yang dikontrol oleh useRef */}
+          {/* Form Lokasi Rak Inventaris */}
           <div className="mb-6 bg-orange-50/30 p-4 rounded-2xl border border-orange-100/40">
-            <label className="text-[9px] font-black text-[#FF6B2C] uppercase tracking-widest block mb-1.5">
-              Lokasi Penyimpanan Rak (Catatan CRM)
-            </label>
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="text-[9px] font-black text-[#FF6B2C] uppercase tracking-widest block">
+                Lokasi Penyimpanan Rak (Catatan CRM)
+              </label>
+              {rackLocation && (
+                <button 
+                  onClick={handleSaveRack}
+                  className="text-[9px] font-black bg-[#1A1A1A] text-white px-2 py-0.5 rounded-md uppercase"
+                >
+                  Simpan Rak
+                </button>
+              )}
+            </div>
             <input 
-              ref={noteInputRef} // HOOK: Mengunci elemen DOM input ini
+              ref={noteInputRef}
               type="text"
               placeholder="Belum diatur (Klik Kelola Stok di bawah)"
               value={rackLocation}
@@ -107,11 +153,10 @@ export default function ProductsDetail() {
             <div>
               <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Harga Estimasi</p>
               <p className="text-3xl font-black text-[#FF6B2C]">
-                Rp {product.price.toLocaleString('id-ID')}
+                Rp {product.price?.toLocaleString('id-ID')}
               </p>
             </div>
             
-            {/* Pemicu useRef saat diklik */}
             <button 
               onClick={handleManageStockClick}
               className="bg-[#FF6B2C] text-white px-8 py-4 rounded-[1.5rem] font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-orange-200 hover:bg-[#e85a1f] active:scale-95 transition-all flex items-center gap-2"
