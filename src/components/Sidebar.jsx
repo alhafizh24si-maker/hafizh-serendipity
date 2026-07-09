@@ -11,9 +11,9 @@ export default function Sidebar() {
   const navigate = useNavigate();
 
   const [currentUser, setCurrentUser] = useState({
-    name: "User",
+    name: "Hafizh",
     email: "user@bengkelgo.com",
-    role: "Member"
+    role: "Admin"
   });
 
   const loadUserData = () => {
